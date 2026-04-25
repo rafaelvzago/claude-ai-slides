@@ -1,57 +1,58 @@
-# Claude Code para Desenvolvimento Open Source
+# Claude Code for Open Source Development
 
-Material que eu uso nas minhas palestras e no meu fluxo de trabalho real com Claude Code para projetos open source.
+Material I use in my talks and in my actual day-to-day workflow with Claude Code for open source projects.
 
 **Rafael Zago** · Senior Software Automation Engineer · Red Hat
 
-## O que tem aqui
+## What's inside
 
-- Apresentação em **PT-BR** e **EN** (33 slides cada)
-- Tema terminal com paleta Catppuccin Macchiato
-- Exemplos de AGENTS.md, Skills, Commands, PRD e Spec
-- Fluxo completo: Spec Driven Dev → PRD → Plan → TDD → Review → MCP
+- Presentation in **PT-BR** and **EN** (33 slides each)
+- Terminal theme with the Catppuccin Macchiato palette
+- Examples of AGENTS.md, Skills, Commands, PRD and Spec
+- Full workflow: Spec Driven Dev → PRD → Plan → TDD → Review → MCP
 
-## Ver online
+## View online
 
 **[claude.rafaelvzago.com](https://claude.rafaelvzago.com)**
 
-## Rodar local
+## Run locally
 
 ```bash
 git clone git@github.com:rafaelvzago/claude-ai-slides.git
 cd claude-ai-slides
 python3 -m http.server 8080
-# abrir http://localhost:8080
+# open http://localhost:8080
 ```
 
-## Estrutura do repo
+## Repository structure
 
 ```
 claude-ai-slides/
-├── CLAUDE.md                    # convenções do projeto (agente lê automaticamente)
-├── AGENTS.md                    # regras para agentes
-├── CONTRIBUTING.md              # como contribuir
-├── README.md                    # este arquivo
-├── index.html                   # landing page
-├── claude-code-open-source.html # slides PT-BR
+├── CLAUDE.md                       # project conventions (auto-read by agent)
+├── AGENTS.md                       # agent rules
+├── CONTRIBUTING.md                  # how to contribute
+├── README.md                       # this file
+├── index.html                      # landing page
+├── claude-code-open-source.html    # slides PT-BR
 ├── claude-code-open-source-en.html # slides EN
 ├── docs/
-│   └── architecture.md          # decisões técnicas
+│   ├── architecture.md             # technical decisions
+│   └── PRD.md                      # product requirements document
 ├── .claude/
-│   ├── settings.json            # permissões e hooks
+│   ├── settings.json               # permissions and hooks
 │   ├── commands/
-│   │   └── review-slides.md     # command para revisar slides
+│   │   └── review-slides.md        # command to review slides
 │   └── skills/
 │       ├── update-slides/
-│       │   └── SKILL.md         # skill para atualizar slides
+│       │   └── SKILL.md            # skill to update slides
 │       └── translate/
-│           └── SKILL.md         # skill para traduzir slides
-├── CNAME                        # GitHub Pages domain
-└── LICENSE                      # Apache 2.0
+│           └── SKILL.md            # skill to translate slides
+├── CNAME                           # GitHub Pages domain
+└── LICENSE                         # Apache 2.0
 ```
 
-Este repo é ao mesmo tempo a apresentação e um exemplo do que ela ensina.
+This repo is both the presentation and an example of what it teaches.
 
-## Licença
+## License
 
 Apache 2.0
