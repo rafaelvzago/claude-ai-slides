@@ -1,0 +1,23 @@
+{
+  "permissions": {
+    "deny": [
+      "Edit(CNAME)",
+      "Edit(LICENSE)",
+      "Write(CNAME)",
+      "Write(LICENSE)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -c 'if echo \"$TOOL_INPUT\" | grep -qE \"CNAME|LICENSE\"; then echo \"BLOCKED: CNAME and LICENSE are protected\" >&2; exit 1; fi'"
+          }
+        ]
+      }
+    ]
+  }
+}

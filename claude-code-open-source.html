@@ -1,0 +1,1331 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code: Um Fluxo de Desenvolvimento Saudável para Open Source</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect x='20' y='30' width='60' height='45' rx='10' fill='%238aadf4'/><rect x='30' y='45' width='12' height='12' rx='3' fill='%2324273a'/><rect x='58' y='45' width='12' height='12' rx='3' fill='%2324273a'/><rect x='40' y='62' width='20' height='4' rx='2' fill='%2324273a'/><rect x='42' y='15' width='16' height='18' rx='4' fill='%23a6da95'/><rect x='48' y='5' width='4' height='12' fill='%23a6da95'/><circle cx='50' cy='3' r='4' fill='%23a6da95'/><rect x='10' y='45' width='10' height='5' rx='2' fill='%238aadf4'/><rect x='80' y='45' width='10' height='5' rx='2' fill='%238aadf4'/><rect x='30' y='75' width='12' height='12' rx='2' fill='%238aadf4'/><rect x='58' y='75' width='12' height='12' rx='2' fill='%238aadf4'/></svg>">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ctp-rosewater: #f4dbd6; --ctp-flamingo: #f0c6c6;
+  --ctp-pink: #f5bde6; --ctp-mauve: #c6a0f6;
+  --ctp-red: #ed8796; --ctp-maroon: #ee99a0;
+  --ctp-peach: #f5a97f; --ctp-yellow: #eed49f;
+  --ctp-green: #a6da95; --ctp-teal: #8bd5ca;
+  --ctp-sky: #91d7e3; --ctp-sapphire: #7dc4e4;
+  --ctp-blue: #8aadf4; --ctp-lavender: #b7bdf8;
+  --ctp-text: #cad3f5; --ctp-subtext1: #b8c0e0;
+  --ctp-subtext0: #a5adcb; --ctp-overlay2: #939ab7;
+  --ctp-overlay1: #8087a2; --ctp-overlay0: #6e738d;
+  --ctp-surface2: #5b6078; --ctp-surface1: #494d64;
+  --ctp-surface0: #363a4f; --ctp-base: #24273a;
+  --ctp-mantle: #1e2030; --ctp-crust: #181926;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { height: 100%; overflow: hidden; background: var(--ctp-crust); }
+body { font-family: 'JetBrains Mono', monospace; color: var(--ctp-text); }
+
+.slide {
+  display: none; position: fixed; inset: 0;
+  background: var(--ctp-base);
+  flex-direction: column; overflow: hidden;
+}
+.slide.active { display: flex; animation: fadeIn 0.2s ease; }
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.terminal-bar {
+  background: var(--ctp-mantle); padding: 8px 16px;
+  display: flex; align-items: center; gap: 8px;
+  border-bottom: 1px solid var(--ctp-surface0);
+  flex-shrink: 0; font-size: 13px;
+}
+.terminal-dots { display: flex; gap: 6px; }
+.terminal-dots span {
+  width: 12px; height: 12px; border-radius: 50%;
+}
+.dot-red { background: var(--ctp-red); }
+.dot-yellow { background: var(--ctp-yellow); }
+.dot-green { background: var(--ctp-green); }
+.terminal-title {
+  color: var(--ctp-overlay1); margin-left: 12px; font-size: 12px;
+}
+
+.slide-content {
+  flex: 1; padding: 40px 60px; overflow-y: auto;
+  display: flex; flex-direction: column; justify-content: flex-start;
+}
+.slide-content::-webkit-scrollbar { width: 6px; }
+.slide-content::-webkit-scrollbar-track { background: var(--ctp-mantle); }
+.slide-content::-webkit-scrollbar-thumb { background: var(--ctp-surface1); border-radius: 3px; }
+
+.slide.lead .slide-content {
+  justify-content: center; align-items: center; text-align: center;
+}
+
+.prompt { color: var(--ctp-green); font-size: 14px; margin-bottom: 8px; }
+h1 {
+  color: var(--ctp-blue); font-size: 2em; font-weight: 700;
+  margin-bottom: 8px; line-height: 1.2;
+}
+h2 {
+  color: var(--ctp-mauve); font-size: 1.2em; font-weight: 400;
+  margin-bottom: 24px; line-height: 1.3;
+}
+h3 {
+  color: var(--ctp-sapphire); font-size: 1em; font-weight: 500;
+  margin: 16px 0 8px 0;
+}
+
+.slide.lead h1 {
+  font-size: 2.4em; color: var(--ctp-blue);
+  text-shadow: 0 0 40px rgba(138,173,244,0.3);
+}
+.slide.lead h2 { color: var(--ctp-subtext0); font-size: 1.1em; }
+.slide.lead .author { color: var(--ctp-overlay1); margin-top: 16px; font-size: 0.9em; }
+
+p { margin-bottom: 12px; line-height: 1.6; font-size: 0.9em; }
+strong { color: var(--ctp-peach); font-weight: 700; }
+em { color: var(--ctp-pink); font-style: italic; }
+a { color: var(--ctp-teal); text-decoration: none; }
+a:hover { text-decoration: underline; }
+
+ul, ol { margin: 8px 0 12px 24px; font-size: 0.88em; line-height: 1.7; }
+li { margin-bottom: 4px; }
+li::marker { color: var(--ctp-overlay0); }
+ul li::marker { content: "▸ "; color: var(--ctp-green); }
+
+pre {
+  background: var(--ctp-mantle); border: 1px solid var(--ctp-surface0);
+  border-radius: 8px; padding: 16px; margin: 12px 0;
+  overflow-x: auto; font-size: 0.8em; line-height: 1.5;
+}
+pre code { color: var(--ctp-text); background: none; padding: 0; }
+code {
+  background: var(--ctp-surface0); color: var(--ctp-green);
+  padding: 2px 6px; border-radius: 4px; font-size: 0.88em;
+}
+
+blockquote {
+  border-left: 3px solid var(--ctp-peach); margin: 16px 0;
+  padding: 12px 16px; background: rgba(245,169,127,0.07);
+  border-radius: 0 6px 6px 0; font-size: 0.85em;
+  color: var(--ctp-subtext1); font-style: italic;
+}
+
+table {
+  width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 0.8em;
+}
+th {
+  background: var(--ctp-surface0); color: var(--ctp-text);
+  padding: 8px 12px; text-align: left; font-weight: 500;
+  border-bottom: 2px solid var(--ctp-surface1);
+}
+td {
+  padding: 6px 12px; border-bottom: 1px solid var(--ctp-surface0);
+  color: var(--ctp-subtext1);
+}
+tr:hover td { background: rgba(54,58,79,0.5); }
+
+.columns { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.ascii-art {
+  color: var(--ctp-blue); font-size: 0.75em; line-height: 1.3;
+  white-space: pre; font-family: 'JetBrains Mono', monospace;
+}
+.ascii-art.green { color: var(--ctp-green); }
+.ascii-art.mauve { color: var(--ctp-mauve); }
+.ascii-art.peach { color: var(--ctp-peach); }
+
+.slide-indicator {
+  position: fixed; bottom: 12px; right: 20px;
+  color: var(--ctp-overlay0); font-size: 12px; z-index: 100;
+}
+.nav-hint {
+  position: fixed; bottom: 12px; left: 20px;
+  color: var(--ctp-surface2); font-size: 11px; z-index: 100;
+}
+
+.slide.part-divider .slide-content {
+  justify-content: center; align-items: center; text-align: center;
+}
+.slide.part-divider h1 { font-size: 2em; margin-bottom: 4px; }
+.slide.part-divider h2 { color: var(--ctp-subtext0); }
+
+.slide-footer {
+  position: absolute; bottom: 10px; left: 50%;
+  transform: translateX(-50%);
+  font-size: 13px; z-index: 10;
+}
+.slide-footer a {
+  color: var(--ctp-overlay0); text-decoration: none; cursor: pointer;
+}
+.slide-footer a:hover { color: var(--ctp-teal); text-decoration: underline; }
+
+.agenda-link {
+  color: var(--ctp-teal); text-decoration: none; cursor: pointer;
+}
+.agenda-link:hover { text-decoration: underline; color: var(--ctp-sky); }
+
+.lang-btn {
+  display: inline-block; padding: 16px 40px; margin: 8px 16px;
+  background: var(--ctp-surface0); color: var(--ctp-text);
+  border: 1px solid var(--ctp-surface1); border-radius: 8px;
+  font-family: 'JetBrains Mono', monospace; font-size: 1.1em;
+  cursor: pointer; text-decoration: none; transition: all 0.2s;
+}
+.lang-btn:hover {
+  background: var(--ctp-blue); color: var(--ctp-crust);
+  text-decoration: none; border-color: var(--ctp-blue);
+}
+</style>
+</head>
+<body>
+
+<!-- Slide 0: Language Selector -->
+<section class="slide lead" id="s0">
+  <div class="terminal-bar">
+    <div class="terminal-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div>
+    <span class="terminal-title">claude ~ /select-language</span>
+  </div>
+  <div class="slide-content">
+    <div class="ascii-art green" style="font-size:0.5em; margin-bottom:24px;">
+ ██████╗██╗      █████╗ ██╗   ██╗██████╗ ███████╗     ██████╗ ██████╗ ██████╗ ███████╗
+██╔════╝██║     ██╔══██╗██║   ██║██╔══██╗██╔════╝    ██╔════╝██╔═══██╗██╔══██╗██╔════╝
+██║     ██║     ███████║██║   ██║██║  ██║█████╗      ██║     ██║   ██║██║  ██║█████╗
+██║     ██║     ██╔══██║██║   ██║██║  ██║██╔══╝      ██║     ██║   ██║██║  ██║██╔══╝
+╚██████╗███████╗██║  ██║╚██████╔╝██████╔╝███████╗    ╚██████╗╚██████╔╝██████╔╝███████╗
+ ╚═════╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚═════╝ ╚══════╝     ╚═════╝ ╚═════╝ ╚═════╝ ╚══════╝</div>
+    <h2>Selecione o idioma / Select your language</h2>
+    <div style="margin-top:24px;">
+      <a class="lang-btn" onclick="goTo(1)">🇧🇷 Português</a>
+      <a class="lang-btn" href="claude-code-open-source-en.html#start">🇺🇸 English</a>
+    </div>
+  </div>
+</section>
+
+<!-- Slide 1: Titulo -->
+<section class="slide lead" id="s1">
+  <div class="terminal-bar">
+    <div class="terminal-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div>
+    <span class="terminal-title">claude ~ /apresentacao</span>
+  </div>
+  <div class="slide-content">
+    <div class="ascii-art green" style="font-size:0.6em; margin-bottom:24px;">
+ ██████╗██╗      █████╗ ██╗   ██╗██████╗ ███████╗     ██████╗ ██████╗ ██████╗ ███████╗
+██╔════╝██║     ██╔══██╗██║   ██║██╔══██╗██╔════╝    ██╔════╝██╔═══██╗██╔══██╗██╔════╝
+██║     ██║     ███████║██║   ██║██║  ██║█████╗      ██║     ██║   ██║██║  ██║█████╗
+██║     ██║     ██╔══██║██║   ██║██║  ██║██╔══╝      ██║     ██║   ██║██║  ██║██╔══╝
+╚██████╗███████╗██║  ██║╚██████╔╝██████╔╝███████╗    ╚██████╗╚██████╔╝██████╔╝███████╗
+ ╚═════╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚═════╝ ╚══════╝     ╚═════╝ ╚═════╝ ╚═════╝ ╚══════╝</div>
+    <h1>Um Fluxo de Desenvolvimento Saudável para Open Source</h1>
+    <h2>Como usar IA para ser mais produtivo sem perder o controle</h2>
+    <p class="author"><strong>Rafael Zago</strong> · Senior Software Automation Engineer · Red Hat</p>
+    <p style="color:var(--ctp-overlay0); font-size:0.8em; margin-top:4px;">Abril 2026</p>
+  </div>
+</section>
+
+<!-- Slide 2: Agenda -->
+<section class="slide" id="s2">
+  <div class="terminal-bar">
+    <div class="terminal-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div>
+    <span class="terminal-title">claude ~ /agenda</span>
+  </div>
+  <div class="slide-content">
+    <div class="prompt">$ cat agenda.md</div>
+    <h1>Agenda</h1>
+    <div class="columns">
+      <div>
+        <h3>Parte 1 — Fundamentos</h3>
+        <ol>
+          <li><a class="agenda-link" onclick="goTo(5)">Código é barato</a></li>
+          <li><a class="agenda-link" onclick="goTo(6)">O que é Claude Code?</a></li>
+          <li><a class="agenda-link" onclick="goTo(7)">Configurando o ambiente</a></li>
+          <li><a class="agenda-link" onclick="goTo(8)">Estrutura do repositório</a></li>
+          <li><a class="agenda-link" onclick="goTo(9)">Exemplo: AGENTS.md</a></li>
+          <li><a class="agenda-link" onclick="goTo(10)">Exemplo: Skill</a></li>
+          <li><a class="agenda-link" onclick="goTo(11)">Exemplo: Command</a></li>
+          <li><a class="agenda-link" onclick="goTo(12)">Skills, Commands e Agents</a></li>
+        </ol>
+        <h3>Parte 2 — O Fluxo de Desenvolvimento</h3>
+        <ol start="9">
+          <li><a class="agenda-link" onclick="goTo(14)">Spec Driven Development</a></li>
+          <li><a class="agenda-link" onclick="goTo(15)">PRD com IA</a></li>
+          <li><a class="agenda-link" onclick="goTo(16)">Exemplo: PRD + Spec</a></li>
+          <li><a class="agenda-link" onclick="goTo(17)">O plano é tudo</a></li>
+          <li><a class="agenda-link" onclick="goTo(18)">TDD com IA</a></li>
+          <li><a class="agenda-link" onclick="goTo(19)">Review de PRs</a></li>
+          <li><a class="agenda-link" onclick="goTo(20)">Respondendo reviews</a></li>
+          <li><a class="agenda-link" onclick="goTo(21)">Organizando com MCP</a></li>
+          <li><a class="agenda-link" onclick="goTo(22)">MCPs mais usados</a></li>
+        </ol>
+      </div>
+      <div>
+        <h3>Parte 3 — Best Practices</h3>
+        <ol start="18">
+          <li><a class="agenda-link" onclick="goTo(24)">Dicas do dia-a-dia</a></li>
+          <li><a class="agenda-link" onclick="goTo(25)">Segurança e guardrails</a></li>
+          <li><a class="agenda-link" onclick="goTo(26)">Trabalhando em paralelo</a></li>
+        </ol>
+        <h3>Parte 4 — A Consequência</h3>
+        <ol start="21">
+          <li><a class="agenda-link" onclick="goTo(28)">Do individual ao time</a></li>
+          <li><a class="agenda-link" onclick="goTo(29)">Agentic workflows em CI/CD</a></li>
+          <li><a class="agenda-link" onclick="goTo(30)">Próximos passos</a></li>
+        </ol>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Slide 3: Parte 1 Divider -->
+<section class="slide part-divider" id="s3">
+  <div class="terminal-bar">
+    <div class="terminal-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div>
+    <span class="terminal-title">claude ~ /fundamentos</span>
+  </div>
+  <div class="slide-content">
+    <div class="ascii-art mauve" style="margin-bottom:20px;">
+╔═══════════════════════════════╗
+║         PARTE  1              ║
+╚═══════════════════════════════╝</div>
+    <h1>Fundamentos</h1>
+  </div>
+</section>
+
+<!-- Slide: Vídeo Introdutório -->
+<section class="slide" id="s3b">
+  <div class="terminal-bar">
+    <div class="terminal-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div>
+    <span class="terminal-title">claude ~ /fundamentos/intro</span>
+  </div>
+  <div class="slide-content" style="justify-content:center; align-items:center; text-align:center;">
+    <h1>Como funciona na prática</h1>
+    <a href="https://www.youtube.com/watch?v=uhxG2B96k7Q" target="_blank" style="display:inline-block; position:relative; margin-top:16px;">
+      <img src="https://img.youtube.com/vi/uhxG2B96k7Q/maxresdefault.jpg" alt="Vídeo: Como funciona na prática"
+        style="width:800px; max-width:90vw; border-radius:8px; border:1px solid var(--ctp-surface0);">
+      <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+        width:80px; height:80px; background:rgba(0,0,0,0.7); border-radius:50%;
+        display:flex; align-items:center; justify-content:center;">
+        <div style="width:0; height:0; border-top:20px solid transparent;
+          border-bottom:20px solid transparent; border-left:35px solid white; margin-left:5px;"></div>
+      </div>
+    </a>
+    <p style="color:var(--ctp-overlay1); font-size:0.8em; margin-top:12px;">Clique para abrir no YouTube ↗</p>
+  </div>
+</section>
+
+<!-- Slide 4: Código é Barato -->
+<section class="slide" id="s4">
+  <div class="terminal-bar">
+    <div class="terminal-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div>
+    <span class="terminal-title">claude ~ /fundamentos/código-barato</span>
+  </div>
+  <div class="slide-content">
+    <div class="prompt">$ claude "qual o problema da engenharia de software hoje?"</div>
+    <h1>Código é Barato</h1>
+    <h2>O problema da engenharia de software mudou</h2>
+    <p>Hoje a gente consegue escrever código em <strong>minutos</strong> com inteligência artificial. Código não é mais o gargalo.</p>
+    <p>O que importa agora:</p>
+    <ul>
+      <li><strong>Planejar</strong> — o que construir e por que</li>
+      <li><strong>Revisar</strong> — garantir que o que foi construído está correto</li>
+      <li><strong>Garantir qualidade</strong> — testes, segurança, observabilidade</li>
+    </ul>
+    <p>LLM é <strong>modelo de linguagem</strong>, não modelo de código. Ela prevê o próximo token. Se você não dá contexto, ela prevê o que aprendeu com milhares de textos — <strong>provavelmente não é o que você quer</strong>.</p>
+    <blockquote>"Não delegue responsabilidade. Delegue execução."</blockquote>
+    <p>A responsabilidade de definir o que a IA vai escrever, de revisar, de aprovar — <strong>é toda sua</strong>.</p>
+  </div>
+</section>
+
+<!-- Slide 5: O que é Claude Code -->
+<section class="slide" id="s5">
+  <div class="terminal-bar">
+    <div class="terminal-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div>
+    <span class="terminal-title">claude ~ /fundamentos/claude-code</span>
+  </div>
+  <div class="slide-content">
+    <div class="prompt">$ claude --version</div>
+    <h1>O que é Claude Code?</h1>
+    <h2>Ferramenta de IA agêntica no terminal</h2>
+    <ul>
+      <li><strong>Terminal-first</strong> — roda onde você trabalha, sem trocar de contexto</li>
+      <li>Disponível em: CLI, VS Code, JetBrains, web, desktop, Slack</li>
+      <li>Le o codebase, edita arquivos, executa comandos, gerencia git</li>
+      <li>Loop contínuo: <strong>le → pensa → age → verifica</strong></li>
+    </ul>
+    <pre><code><span style="color:var(--ctp-green)"># Instalar</span>
+curl -fsSL https://claude.ai/install.sh | sh
+
+<span style="color:var(--ctp-green)"># Usar no seu projeto</span>
+cd meu-projeto && claude</code></pre>
+    <p><strong>Modos de operação:</strong></p>
+    <table>
+      <tr><th>Modo</th><th>O que faz</th></tr>
+      <tr><td><strong>Bypass</strong></td><td>Faz o que achar melhor, sem perguntar</td></tr>
+      <tr><td><strong>Accept edits</strong></td><td>Pede aprovação para cada mudança</td></tr>
+      <tr><td><strong>Plan mode</strong></td><td>Só analisa e propõe — não faz nada</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- Slide 6: Configurando o Ambiente -->
+<section class="slide" id="s6">
+  <div class="terminal-bar">
+    <div class="terminal-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div>
+    <span class="terminal-title">claude ~ /fundamentos/configuracao</span>
+  </div>
+  <div class="slide-content">
+    <div class="prompt">$ cat CLAUDE.md</div>
+    <h1>Configurando o Ambiente</h1>
+    <h2>CLAUDE.md — O arquivo que muda tudo</h2>
+    <div class="columns">
+      <div>
+        <h3>CLAUDE.md Local</h3>
+        <p>Suas <strong>preferências pessoais</strong>:</p>
+        <ul>
+          <li>Como você gosta de codar</li>
+          <li>Programação funcional, DDD, etc.</li>
+          <li>Skills disponiveis</li>
+          <li>Regras de segurança</li>
+          <li>Tom de comunicação para PRs</li>
+        </ul>
+      </div>
+      <div>
+        <h3>CLAUDE.md do Projeto</h3>
+        <p><strong>Convenções do time</strong>:</p>
+        <ul>
+          <li>Arquitetura do projeto</li>
+          <li>Comandos (make test, make lint)</li>
+          <li>Workflow de desenvolvimento</li>
+          <li>Checklist de PRs</li>
+          <li>Padrões de teste</li>
+        </ul>
+      </div>
+    </div>
+    <p>O agente le esses arquivos <strong>automaticamente</strong> ao iniciar cada sessão. Sem eles, o agente não tem contexto — e vai chutar.</p>
+    <p>Você pode ter CLAUDE.md <strong>em cada modulo</strong> do projeto. Ex: <strong>Kiali</strong> usa <code>.claude/code-reviewer/reference/</code> no upstream.</p>
+  </div>
+</section>
+
+<!-- Slide 7: Estrutura do Repositório -->
+<section class="slide" id="s7">
+  <div class="terminal-bar">
+    <div class="terminal-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div>
+    <span class="terminal-title">claude ~ /fundamentos/estrutura-repo</span>
+  </div>
+  <div class="slide-content">
+    <div class="prompt">$ tree -a --dirsfirst meu-projeto/</div>
+    <h1>Estruturando o Repositório para o Time</h1>
+    <h2>Contexto compartilhado para agentes e engenheiros</h2>
+    <div class="columns">
+      <div>
+        <pre><code class="ascii-art"><span style="color:var(--ctp-blue)">meu-projeto/</span>
+├── <span style="color:var(--ctp-peach)">CLAUDE.md</span>              <span style="color:var(--ctp-overlay0)">convenções do projeto</span>
+├── <span style="color:var(--ctp-peach)">AGENTS.md</span>             <span style="color:var(--ctp-overlay0)">instruções p/ agentes</span>
+├── <span style="color:var(--ctp-peach)">CONTRIBUTING.md</span>       <span style="color:var(--ctp-overlay0)">como contribuir</span>
+├── <span style="color:var(--ctp-blue)">docs/</span>
+│   └── <span style="color:var(--ctp-green)">architecture.md</span>   <span style="color:var(--ctp-overlay0)">decisões técnicas</span>
+├── <span style="color:var(--ctp-blue)">.claude/</span>
+│   ├── <span style="color:var(--ctp-yellow)">settings.json</span>     <span style="color:var(--ctp-overlay0)">permissoes e hooks</span>
+│   ├── <span style="color:var(--ctp-blue)">commands/</span>
+│   │   └── <span style="color:var(--ctp-green)">review-pr.md</span>
+│   ├── <span style="color:var(--ctp-blue)">agents/</span>
+│   │   ├── <span style="color:var(--ctp-green)">code-quality.md</span>
+│   │   └── <span style="color:var(--ctp-green)">security.md</span>
+│   └── <span style="color:var(--ctp-blue)">skills/</span>
+│       ├── <span style="color:var(--ctp-blue)">tdd/</span>
+│       │   └── <span style="color:var(--ctp-green)">SKILL.md</span>
+│       └── <span style="color:var(--ctp-blue)">git-worktrees/</span>
+│           └── <span style="color:var(--ctp-green)">SKILL.md</span>
+└── <span style="color:var(--ctp-blue)">src/modulo-a/</span>
+    └── <span style="color:var(--ctp-peach)">CLAUDE.md</span>          <span style="color:var(--ctp-overlay0)">contexto do modulo</span></code></pre>
+      </div>
+      <div>
+        <table>
+          <tr><th>Arquivo</th><th>Quem le</th><th>Para que</th></tr>
+          <tr><td><strong>CLAUDE.md</strong></td><td>Agente (auto)</td><td>Convenções, arquitetura, comandos</td></tr>
+          <tr><td><strong>AGENTS.md</strong></td><td>Agente (auto)</td><td>Regras específicas para agentes</td></tr>
+          <tr><td><strong>CONTRIBUTING.md</strong></td><td>Humano + Agente</td><td>Como contribuir, workflow</td></tr>
+          <tr><td><strong>architecture.md</strong></td><td>Humano + Agente</td><td>Decisões técnicas, diagramas</td></tr>
+          <tr><td><strong>settings.json</strong></td><td>Agente (auto)</td><td>Permissoes, hooks, segurança</td></tr>
+        </table>
+        <blockquote>"Se o contexto está no repo, qualquer engenheiro novo — ou agente novo — consegue ser produtivo no primeiro dia."</blockquote>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Slide: Exemplo de AGENTS.md -->
+<section class="slide" id="s-agents-example">
+  <div class="terminal-bar">
+    <div class="terminal-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div>
+    <span class="terminal-title">claude ~ /fundamentos/agents-md</span>
+  </div>
+  <div class="slide-content">
+    <div class="prompt">$ cat AGENTS.md</div>
+    <h1>AGENTS.md — O README para Agentes</h1>
+    <h2>Um formato aberto usado por 60K+ projetos open source</h2>
+    <div class="columns">
+      <div>
+        <pre><code><span style="color:var(--ctp-blue)"># AGENTS.md</span>
+
+<span style="color:var(--ctp-mauve)">## Comandos de setup</span>
+- Instalar deps: <span style="color:var(--ctp-green)">`pnpm install`</span>
+- Dev server: <span style="color:var(--ctp-green)">`pnpm dev`</span>
+- Rodar testes: <span style="color:var(--ctp-green)">`pnpm test`</span>
+
+<span style="color:var(--ctp-mauve)">## Estilo de código</span>
+- TypeScript strict mode
+- Aspas simples, sem ponto e vírgula
+- Preferir padrões funcionais
+
+<span style="color:var(--ctp-mauve)">## Instruções de PR</span>
+- Título: [projeto] Descrição
+- Rodar lint e test antes de commitar</code></pre>
+      </div>
+      <div>
+        <h3>Por que AGENTS.md?</h3>
+        <ul>
+          <li><strong>README.md</strong> é para humanos. <strong>AGENTS.md</strong> complementa com contexto para agentes</li>
+          <li>Funciona com <strong>20+ ferramentas</strong>: Claude Code, Cursor, Codex, Gemini CLI, Aider, Devin, etc.</li>
+          <li>Suporta <strong>aninhamento</strong> em monorepos — cada subprojeto com seu AGENTS.md</li>
+          <li>Sem campos obrigatórios — é <strong>apenas Markdown</strong></li>
+          <li>Mantido pela <strong>Linux Foundation</strong> (Agentic AI Foundation)</li>
+        </ul>
+        <p style="font-size:0.8em; color:var(--ctp-overlay1);">Ref: <code>agents.md</code></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Slide: Exemplo de Skill -->
+<section class="slide" id="s-skill-example">
+  <div class="terminal-bar">
+    <div class="terminal-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div>
+    <span class="terminal-title">claude ~ /fundamentos/skill-exemplo</span>
+  </div>
+  <div class="slide-content">
+    <div class="prompt">$ cat .claude/skills/tdd/SKILL.md</div>
+    <h1>Exemplo de Skill — skill-tdd.md</h1>
+    <h2>Instruções que o agente carrega automaticamente</h2>
+    <div class="columns">
+      <div>
+        <pre><code><span style="color:var(--ctp-peach)">---</span>
+<span style="color:var(--ctp-blue)">name:</span> tdd
+<span style="color:var(--ctp-blue)">description:</span> <span style="color:var(--ctp-green)">></span>
+  Use when writing tests first, doing TDD,
+  or when the user says "write tests" or
+  "test-driven". Writes failing tests,
+  then implements code to pass them.
+<span style="color:var(--ctp-peach)">---</span>
+
+<span style="color:var(--ctp-blue)"># TDD Skill</span>
+
+<span style="color:var(--ctp-mauve)">## Workflow</span>
+1. Read the plan/spec for the task
+2. Write test cases FIRST (they must fail)
+3. Implement code to make tests pass
+4. Run tests to verify
+5. Refactor if needed, keeping tests green
+
+<span style="color:var(--ctp-mauve)">## Rules</span>
+- Never skip the failing test step
+- Use the project's test framework
+- One test file per feature/module</code></pre>
+      </div>
+      <div>
+        <h3>Como funciona</h3>
+        <ul>
+          <li>Cada skill é uma pasta com <code>SKILL.md</code></li>
+          <li>O campo <strong>description</strong> define quando o agente ativa a skill automaticamente</li>
+          <li>Skills podem conter scripts, templates e referências auxiliares</li>
+          <li>O agente lê a skill e segue as instruções como um especialista</li>
+        </ul>
+        <h3>Repositório oficial</h3>
+        <p><code>github.com/anthropics/skills</code> — 123K+ ⭐</p>
+        <blockquote>"Uma skill é como contratar um especialista para uma tarefa específica."</blockquote>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Slide: Exemplo de Command -->
+<section class="slide" id="s-command-example">
+  <div class="terminal-bar">
+    <div class="terminal-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div>
+    <span class="terminal-title">claude ~ /fundamentos/command-exemplo</span>
+  </div>
+  <div class="slide-content">
+    <div class="prompt">$ claude /help</div>
+    <h1>Exemplo de Command — /review-pr</h1>
+    <h2>Commands orquestram skills e agentes</h2>
+    <div class="columns">
+      <div>
+        <pre><code><span style="color:var(--ctp-blue)"># /review-pr</span>
+
+<span style="color:var(--ctp-mauve)">## Workflow</span>
+1. Fetch PR diff using GitHub API
+2. Launch 4 agents in parallel:
+   - code-quality-reviewer
+   - performance-reviewer
+   - test-coverage-reviewer
+   - security-reviewer
+3. Consolidate findings
+4. Post comments via API
+
+<span style="color:var(--ctp-mauve)">## Usage</span>
+/review-pr &lt;PR_URL&gt;
+/review-pr   <span style="color:var(--ctp-overlay0)">(auto-detect branch PR)</span></code></pre>
+      </div>
+      <div>
+        <h3>Commands úteis (built-in)</h3>
+        <table>
+          <tr><th>Command</th><th>O que faz</th></tr>
+          <tr><td><code>/compact</code></td><td>Comprimir contexto</td></tr>
+          <tr><td><code>/rewind</code></td><td>Voltar a um ponto anterior</td></tr>
+          <tr><td><code>/plan</code></td><td>Entrar em plan mode</td></tr>
+          <tr><td><code>/batch</code></td><td>Mudanças em paralelo (5-30 unidades)</td></tr>
+          <tr><td><code>/review</code></td><td>Revisar PR localmente</td></tr>
+          <tr><td><code>/init</code></td><td>Inicializar com CLAUDE.md</td></tr>
+          <tr><td><code>/skills</code></td><td>Listar skills disponíveis</td></tr>
+          <tr><td><code>/mcp</code></td><td>Gerenciar MCP servers</td></tr>
+        </table>
+        <p style="font-size:0.8em; color:var(--ctp-overlay1);">Ref: <code>code.claude.com/docs/en/commands</code></p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Slide: Skills, Commands e Agents (resumo) -->
+<section class="slide" id="s-skills-summary">
+  <div class="terminal-bar">
+    <div class="terminal-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div>
+    <span class="terminal-title">claude ~ /fundamentos/hierarquia</span>
+  </div>
+  <div class="slide-content">
+    <div class="prompt">$ tree .claude/</div>
+    <h1>Skills, Commands e Agents</h1>
+    <h2>A hierarquia de instruções — tudo são arquivos markdown</h2>
+    <pre><code class="ascii-art">Skills <span style="color:var(--ctp-overlay0)">(tarefas repetitivas)</span>
+    │   ex: como usar git worktrees, como escrever testes
+    ▼
+Commands <span style="color:var(--ctp-overlay0)">(instruções maiores que usam skills)</span>
+    │   ex: /review-pr — busca diff, lança agentes, posta comentários
+    ▼
+Agents <span style="color:var(--ctp-overlay0)">(atores que rodam diversos skills)</span>
+        ex: code-quality-reviewer, security-reviewer</code></pre>
+    <table>
+      <tr><th>Tipo</th><th>O que é</th><th>Exemplo</th></tr>
+      <tr><td><strong>Skill</strong></td><td>Instruções para uma tarefa específica</td><td>skills/tdd/SKILL.md</td></tr>
+      <tr><td><strong>Command</strong></td><td>Orquestração que usa skills e agents</td><td>/review-pr, /create-tickets</td></tr>
+      <tr><td><strong>Agent</strong></td><td>Ator especializado com contexto próprio</td><td>code-quality-reviewer, security-reviewer</td></tr>
+    </table>
+    <p>Cada sessão do terminal é um agente independente. Você pode ter <strong>vários rodando em paralelo</strong>, cada um com seu foco.</p>
+  </div>
+</section>
+
+<!-- Slide: Parte 2 Divider -->
+<section class="slide part-divider" id="s8">
+  <div class="terminal-bar">
+    <div class="terminal-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div>
+    <span class="terminal-title">claude ~ /fluxo</span>
+  </div>
+  <div class="slide-content">
+    <div class="ascii-art peach" style="margin-bottom:20px;">
+╔═══════════════════════════════╗
+║         PARTE  2              ║
+╚═══════════════════════════════╝</div>
+    <h1>O Fluxo de Desenvolvimento</h1>
+  </div>
+</section>
+
+<!-- Slide 9: Spec Driven Development -->
+<section class="slide" id="s9">
+  <div class="terminal-bar">
+    <div class="terminal-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div>
+    <span class="terminal-title">claude ~ /fluxo/spec-driven</span>
+  </div>
+  <div class="slide-content">
+    <div class="prompt">$ claude --spec ticket.md</div>
+    <h1>Spec Driven Development</h1>
+    <h2>Defina a spec. O agente executa.</h2>
+    <p>Você não pede para a IA "codar algo". Você define <strong>exatamente</strong> o que quer:</p>
+    <ol>
+      <li><strong>Ticket</strong> — qual o problema, qual o contexto (Linear, Jira, GitHub Issue)</li>
+      <li><strong>Contexto técnico</strong> — como o sistema funciona, quais padrões seguir</li>
+      <li><strong>Regras</strong> — o que pode e o que não pode fazer</li>
+      <li><strong>Resultado esperado</strong> — PRs abertos, testes passando, docs atualizados</li>
+    </ol>
+    <pre><code><span style="color:var(--ctp-green)">Você:</span> "Esse ticket e sobre refatorar as chamadas blocantes da API
+       do Google. A gente usa OpenTelemetry para observabilidade e
+       functional interfaces para injeção de dependencia."
+
+<span style="color:var(--ctp-blue)">Claude:</span> [explora o codebase em paralelo]
+        [le 7 patterns, 3 arquivos]
+        [propõe um plano detalhado]</code></pre>
+    <p>O agente explora, le, entende — e <strong>propõe um plano</strong>. Você não aceita cegamente. Você <strong>revisa o plano</strong>.</p>
+  </div>
+</section>
+
+<!-- Slide 10: PRD -->
+<section class="slide" id="s10">
+  <div class="terminal-bar">
+    <div class="terminal-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div>
+    <span class="terminal-title">claude ~ /fluxo/prd</span>
+  </div>
+  <div class="slide-content">
+    <div class="prompt">$ claude "crie um PRD para essa feature"</div>
+    <h1>PRD — Product Requirements Document</h1>
+    <h2>Antes de codar, projete</h2>
+    <p>Use IA para <strong>co-criar</strong> o PRD do que você vai construir:</p>
+    <ul>
+      <li>Descrever o que o produto/feature faz</li>
+      <li>Decisões técnicas: stack, infra, autenticação, banco de dados</li>
+      <li>Endpoints e contratos (Zod, TypeScript strict)</li>
+      <li>Milestones com checkboxes — o agente vai ticando conforme avanca</li>
+    </ul>
+    <pre><code><span style="color:var(--ctp-blue)">## PRD: Refatoração do Cliente DialogFlow</span>
+
+<span style="color:var(--ctp-mauve)">### Decisões técnicas</span>
+- Kotlin coroutines para chamadas não-blocantes
+- Feature flag para controlar rollback
+- OpenTelemetry para instrumentação
+- Deprecar classes antigas (não remover imediatamente)
+
+<span style="color:var(--ctp-mauve)">### Milestones</span>
+- [ ] M0: Criar interfaces e feature flag
+- [ ] M1: Implementar cliente não-blocante
+- [x] M2: Testes unitarios e de integracao
+- [ ] M3: Migrar chamadas existentes</code></pre>
+    <blockquote>"Programação comeca na engenharia. Cada decisao tomada no PRD economiza 4-5 bug fixes la na frente."</blockquote>
+  </div>
+</section>
+
+<!-- Slide: Na Prática: PRD + Spec -->
+<section class="slide" id="s-prd-spec">
+  <div class="terminal-bar">
+    <div class="terminal-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div>
+    <span class="terminal-title">claude ~ /fluxo/prd-spec-exemplo</span>
+  </div>
+  <div class="slide-content">
+    <div class="prompt">$ cat PRD.md && cat SPEC.md</div>
+    <h1>Na Prática: PRD + Spec</h1>
+    <h2>O contrato entre você e o agente</h2>
+    <div class="columns">
+      <div>
+        <h3>PRD — O que construir</h3>
+        <pre><code><span style="color:var(--ctp-blue)"># PRD: Sistema de Notificações</span>
+
+<span style="color:var(--ctp-mauve)">## Objetivo</span>
+Usuários recebem notificações em tempo
+real sobre eventos do projeto.
+
+<span style="color:var(--ctp-mauve)">## Decisões técnicas</span>
+- WebSocket com fallback para SSE
+- PostgreSQL + Redis pub/sub
+- Feature flag: notifications_v2
+
+<span style="color:var(--ctp-mauve)">## Milestones</span>
+- [ ] M0: Schema + migration
+- [ ] M1: WebSocket server
+- [x] M2: Testes e2e
+- [ ] M3: UI de preferências</code></pre>
+      </div>
+      <div>
+        <h3>Spec — Como verificar</h3>
+        <pre><code><span style="color:var(--ctp-blue)"># Spec: WebSocket Notification Server</span>
+
+<span style="color:var(--ctp-mauve)">## Goal</span>
+Real-time event delivery to clients.
+
+<span style="color:var(--ctp-mauve)">## Acceptance Criteria</span>
+- GIVEN user connected via WebSocket
+  WHEN an event triggers
+  THEN notification arrives in &lt; 500ms
+
+<span style="color:var(--ctp-mauve)">## Non-goals</span>
+- Push notifications (mobile)
+- Email digest
+
+<span style="color:var(--ctp-mauve)">## Edge Cases</span>
+- Disconnect → retry queue
+- Redis down → fallback to SSE</code></pre>
+      </div>
+    </div>
+    <blockquote>"O PRD define O QUE construir. A Spec define COMO verificar que funciona. Juntos, eles são o contrato entre você e o agente."</blockquote>
+  </div>
+</section>
+
+<!-- Slide 11: O Plano é Tudo -->
+<section class="slide" id="s11">
+  <div class="terminal-bar">
+    <div class="terminal-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div>
+    <span class="terminal-title">claude ~ /fluxo/plano</span>
+  </div>
+  <div class="slide-content">
+    <div class="prompt">$ claude --plan</div>
+    <h1>O Plano é Tudo</h1>
+    <h2>Aprovar antes de codar. Sempre.</h2>
+    <p>O ponto mais importante do workflow: <strong>dar autonomia ao agente SÓ depois de aprovar o plano</strong>.</p>
+    <pre><code class="ascii-art">         ┌──────────────────┐
+         │  <span style="color:var(--ctp-green)">Você define</span>      │
+         │  <span style="color:var(--ctp-green)">o problema</span>       │
+         └────────┬─────────┘
+                  ▼
+         ┌──────────────────┐
+         │ <span style="color:var(--ctp-blue)">Agente explora</span>   │◄──── <span style="color:var(--ctp-red)">Rejeitar + refinar</span>
+         │ <span style="color:var(--ctp-blue)">e propõe plano</span>   │      (feature flags,
+         └────────┬─────────┘       deprecacao gradual)
+                  ▼
+         ┌──────────────────┐
+         │ <span style="color:var(--ctp-yellow)">Você revisa</span>      │
+         │ <span style="color:var(--ctp-yellow)">e aprova</span>         │
+         └────────┬─────────┘
+                  ▼
+         ┌──────────────────┐
+         │ <span style="color:var(--ctp-green)">Agente executa</span>   │
+         │ <span style="color:var(--ctp-green)">com autonomia</span>    │
+         └──────────────────┘</code></pre>
+    <p><strong>Não aceite o primeiro rascunho.</strong> Itere. Refine. Adicione restrições.</p>
+  </div>
+</section>
+
+<!-- Slide 12: TDD com IA -->
+<section class="slide" id="s12">
+  <div class="terminal-bar">
+    <div class="terminal-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div>
+    <span class="terminal-title">claude ~ /fluxo/tdd</span>
+  </div>
+  <div class="slide-content">
+    <div class="prompt">$ claude "escreva os testes primeiro"</div>
+    <h1>TDD com IA</h1>
+    <h2>Testes primeiro. Fazer falhar. Implementar. Iterar.</h2>
+    <p>O agente escreve testes <strong>antes</strong> da implementação:</p>
+    <ol>
+      <li>Escreve cenários de teste baseados no plano aprovado</li>
+      <li>Testes <strong>falham</strong> (classes ainda não existem)</li>
+      <li>Implementa o código para fazer os testes passarem</li>
+      <li>Roda testes novamente — se falham, corrige e repete</li>
+    </ol>
+    <p><strong>O segredo:</strong> dar ao agente <strong>ferramentas para verificar</strong> se o trabalho dele está certo.</p>
+    <table>
+      <tr><th>Sem verificação</th><th>Com verificação</th></tr>
+      <tr><td>Agente diz que terminou</td><td>Agente roda testes, linter, build</td></tr>
+      <tr><td>Você sobe o PR</td><td>Se falha, o agente corrige sozinho</td></tr>
+      <tr><td>Não compila</td><td>Entrega PR que compila e passa</td></tr>
+      <tr><td>Vai-e-volta eterno</td><td>Loop autônomo até funcionar</td></tr>
+    </table>
+    <blockquote>"Se o agente não tem ferramentas para saber se o trabalho está certo, você vai perder tempo no vai-e-volta."</blockquote>
+  </div>
+</section>
+
+<!-- Slide 13: Review de PRs -->
+<section class="slide" id="s13">
+  <div class="terminal-bar">
+    <div class="terminal-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div>
+    <span class="terminal-title">claude ~ /fluxo/review</span>
+  </div>
+  <div class="slide-content">
+    <div class="prompt">$ claude --plan "review this PR"</div>
+    <h1>Review de PRs com IA</h1>
+    <h2>Você revisa primeiro. O agente complementa.</h2>
+    <p>Use <strong>plan mode</strong> para review — o agente analisa mas <strong>não faz nada</strong>.</p>
+    <pre><code class="ascii-art">                ┌─ <span style="color:var(--ctp-blue)">Code Quality</span> ──── arquitetura, DDD, padrões
+<span style="color:var(--ctp-green)">PR do colega</span> ──►├─ <span style="color:var(--ctp-yellow)">Performance</span> ───── chamadas blocantes, N+1
+                ├─ <span style="color:var(--ctp-teal)">Test Coverage</span> ─── cenários faltando
+                └─ <span style="color:var(--ctp-red)">Security</span> ──────── PII, injeção, dependências
+                          │
+                <span style="color:var(--ctp-mauve)">Consolidação + Comentários via API</span></code></pre>
+    <p><strong>4 subagentes</strong> rodam em paralelo, cada um especializado.</p>
+    <p><strong>Mas atenção:</strong></p>
+    <ul>
+      <li>Você <strong>revisa primeiro</strong>, sem contexto do Claude, para manter a sanidade</li>
+      <li>O agente <strong>complementa</strong> sua revisao — não substitui</li>
+      <li>Se você começar a delegar tudo, vai criar o hábito de aceitar tudo</li>
+      <li><strong>Revisar código é responsabilidade sua</strong></li>
+    </ul>
+  </div>
+</section>
+
+<!-- Slide 14: Respondendo Reviews -->
+<section class="slide" id="s14">
+  <div class="terminal-bar">
+    <div class="terminal-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div>
+    <span class="terminal-title">claude ~ /fluxo/respond-reviews</span>
+  </div>
+  <div class="slide-content">
+    <div class="prompt">$ claude "resolva os comentários do PR #42"</div>
+    <h1>Respondendo Reviews</h1>
+    <h2>Ler, avaliar, resolver</h2>
+    <p>Quando revisam <strong>seus</strong> PRs:</p>
+    <ol>
+      <li>Você le os comentários e avalia quais fazem sentido</li>
+      <li>Manda o agente <strong>resolver + responder</strong> os que você concorda</li>
+      <li>O agente faz o fix, commita, e responde o comentario</li>
+    </ol>
+    <pre><code><span style="color:var(--ctp-green)">$</span> claude "Leia os comentários do PR #42.
+  Veja quais fazem sentido e resolva.
+  Responda os comentários explicando o que mudou."</code></pre>
+    <h3>Stacked PRs — PRs incrementais</h3>
+    <table>
+      <tr><th>Prática</th><th>Beneficio</th></tr>
+      <tr><td>PRs <strong>pequenos</strong></td><td>Mais fácil de revisar</td></tr>
+      <tr><td>PRs <strong>testáveis</strong></td><td>Cada um tem seus testes</td></tr>
+      <tr><td>PRs <strong>empilhados</strong></td><td>Um depende do anterior</td></tr>
+      <tr><td><strong>Rollback fácil</strong></td><td>Reverte só o PR problemático</td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- Slide 15: Organizando com MCP -->
+<section class="slide" id="s15">
+  <div class="terminal-bar">
+    <div class="terminal-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div>
+    <span class="terminal-title">claude ~ /fluxo/mcp</span>
+  </div>
+  <div class="slide-content">
+    <div class="prompt">$ claude /mcp-servers</div>
+    <h1>Organizando com MCP</h1>
+    <h2>Conectar o agente ao mundo externo</h2>
+    <p><strong>MCP</strong> (Model Context Protocol) conecta o Claude Code a ferramentas externas:</p>
+    <table>
+      <tr><th>MCP Server</th><th>O que faz</th></tr>
+      <tr><td><strong>Linear / Jira</strong></td><td>Ler tickets, criar sub-tarefas, atualizar status</td></tr>
+      <tr><td><strong>GitHub / GitLab</strong></td><td>Buscar PRs, diffs, postar comentários</td></tr>
+      <tr><td><strong>Notion / Confluence</strong></td><td>Ler documentação do time</td></tr>
+      <tr><td><strong>Banco de dados</strong></td><td>Queries diretas</td></tr>
+    </table>
+    <pre><code><span style="color:var(--ctp-green)">Você:</span> "Crie os sub-tickets no Linear para essa refatoração"
+
+<span style="color:var(--ctp-blue)">Claude:</span> [le o contexto do ticket]
+        [propõe estrutura de sub-tarefas]
+        [pede aprovação]
+        [cria os tickets via MCP]</code></pre>
+    <p>O agente entende o contexto, propõe a estrutura, e <strong>só cria depois que você aprova</strong>.</p>
+  </div>
+</section>
+
+<!-- Slide: MCPs Mais Usados -->
+<section class="slide" id="s-mcp-examples">
+  <div class="terminal-bar">
+    <div class="terminal-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div>
+    <span class="terminal-title">claude ~ /fluxo/mcp-exemplos</span>
+  </div>
+  <div class="slide-content">
+    <div class="prompt">$ claude /mcp</div>
+    <h1>MCPs Mais Usados</h1>
+    <h2>Servidores que conectam o agente ao mundo real</h2>
+    <div class="columns">
+      <div>
+        <table>
+          <tr><th>MCP Server</th><th>O que faz</th></tr>
+          <tr><td><strong>Context7</strong></td><td>Documentação atualizada de libs em tempo real — resolve o problema de APIs desatualizadas no treinamento</td></tr>
+          <tr><td><strong>TestSprite</strong></td><td>Agente de testes automatizados via MCP — orquestra workflows de teste direto do editor</td></tr>
+          <tr><td><strong>GitHub</strong></td><td>Ler repos, criar issues, buscar PRs, postar comentários</td></tr>
+          <tr><td><strong>Brave Search</strong></td><td>Busca web em tempo real — 2.000 queries/mês grátis</td></tr>
+          <tr><td><strong>PostgreSQL</strong></td><td>Inspecionar schema e executar queries (read-only por padrão)</td></tr>
+          <tr><td><strong>Filesystem</strong></td><td>Ler, escrever e buscar arquivos em diretórios específicos</td></tr>
+          <tr><td><strong>Notion</strong></td><td>Ler e editar páginas de documentação do time</td></tr>
+          <tr><td><strong>Slack</strong></td><td>Integração com comunicação do time</td></tr>
+        </table>
+      </div>
+      <div>
+        <h3>Configuração</h3>
+        <pre><code><span style="color:var(--ctp-green)">// .mcp.json (no projeto)</span>
+{
+  "<span style="color:var(--ctp-blue)">mcpServers</span>": {
+    "<span style="color:var(--ctp-peach)">context7</span>": {
+      "command": "npx",
+      "args": ["@upstash/context7-mcp"]
+    },
+    "<span style="color:var(--ctp-peach)">github</span>": {
+      "command": "mcp-github",
+      "env": {"GITHUB_TOKEN": "..."}
+    }
+  }
+}</code></pre>
+        <h3>Dicas</h3>
+        <ul>
+          <li>A maioria roda <strong>4-6 MCPs</strong> simultaneamente</li>
+          <li>7 dos top 15 são <strong>gratuitos</strong> sem API key</li>
+          <li><code>--scope user</code> para MCPs globais</li>
+          <li>Scope de projeto para MCPs específicos</li>
+          <li>Adicione <code>"use context7"</code> no prompt para docs atualizados</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Slide 16: Parte 3 Divider -->
+<section class="slide part-divider" id="s16">
+  <div class="terminal-bar">
+    <div class="terminal-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div>
+    <span class="terminal-title">claude ~ /best-practices</span>
+  </div>
+  <div class="slide-content">
+    <div class="ascii-art green" style="margin-bottom:20px;">
+╔═══════════════════════════════╗
+║         PARTE  3              ║
+╚═══════════════════════════════╝</div>
+    <h1>Best Practices</h1>
+  </div>
+</section>
+
+<!-- Slide 17: Best Practices do Dia-a-Dia -->
+<section class="slide" id="s17">
+  <div class="terminal-bar">
+    <div class="terminal-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div>
+    <span class="terminal-title">claude ~ /best-practices/dicas</span>
+  </div>
+  <div class="slide-content">
+    <div class="prompt">$ claude /help</div>
+    <h1>Best Practices do Dia-a-Dia</h1>
+    <h2>O que faz a diferença na prática</h2>
+    <table>
+      <tr><th>Prática</th><th>Por que?</th></tr>
+      <tr><td>Use <code>/compact</code> regularmente</td><td>Comprime histórico quando o contexto fica longo</td></tr>
+      <tr><td>Use <code>/rewind</code> em conversas ruins</td><td>Não polua o contexto com respostas erradas</td></tr>
+      <tr><td><strong>De formas de verificação</strong></td><td>Claude funciona muito melhor quando pode validar</td></tr>
+      <tr><td>Uma tarefa por sessão</td><td>Contexto focado = resultados melhores</td></tr>
+      <tr><td>Quebre em pedaços de 15 min</td><td>"Que tal começar com só 15 minutos?"</td></tr>
+      <tr><td>Não conserte bugs você mesmo</td><td>Peça: investigar → documentar → consertar</td></tr>
+      <tr><td>Use notificações</td><td>Configure o terminal para avisar quando terminar</td></tr>
+    </table>
+    <pre><code><span style="color:var(--ctp-overlay0)">O ciclo ideal de uma sessão:</span>
+1. Passar o ticket + contexto
+2. Agente explora e propõe plano
+3. Você revisa e aprova o plano
+4. Agente implementa + roda testes
+5. Você revisa o resultado
+6. Agente abre PR</code></pre>
+    <blockquote>"Give Claude ways to verify its work. This is the single highest-leverage practice." — Anthropic</blockquote>
+  </div>
+</section>
+
+<!-- Slide 18: Segurança e Guardrails -->
+<section class="slide" id="s18">
+  <div class="terminal-bar">
+    <div class="terminal-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div>
+    <span class="terminal-title">claude ~ /best-practices/segurança</span>
+  </div>
+  <div class="slide-content">
+    <div class="prompt">$ cat .claude/settings.json</div>
+    <h1>Segurança e Guardrails</h1>
+    <h2>Controle o que o agente pode fazer</h2>
+    <div class="columns">
+      <div>
+        <h3>Hooks</h3>
+        <p>Código que roda em pontos do ciclo de vida:</p>
+        <ul>
+          <li><strong>PreToolUse</strong> — bloquear <code>rm -rf</code>, force push</li>
+          <li><strong>PostToolUse</strong> — rodar linter, formatter</li>
+          <li><strong>Stop</strong> — notificar quando terminar</li>
+        </ul>
+        <pre><code>{
+  "hooks": {
+    "PreToolUse": [{
+      "matcher": "Bash",
+      "hooks": [{
+        "type": "command",
+        "command": "check-safety.sh"
+      }]
+    }]
+  }
+}</code></pre>
+      </div>
+      <div>
+        <h3>Regras no CLAUDE.md</h3>
+        <p>Explicitar o que <strong>não</strong> pode:</p>
+        <ul>
+          <li>Não mexer em dados de produção</li>
+          <li>Não alterar main/master diretamente</li>
+          <li>Não fazer alterações em APIs de terceiros</li>
+          <li>Não commitar secrets ou credenciais</li>
+        </ul>
+        <h3>Human-on-the-Loop</h3>
+        <ul>
+          <li>Todo PR gerado requer revisao humana</li>
+          <li>Fixes passam por testes antes</li>
+          <li>Nunca mutação silenciosa</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Slide 19: Trabalhando em Paralelo -->
+<section class="slide" id="s19">
+  <div class="terminal-bar">
+    <div class="terminal-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div>
+    <span class="terminal-title">claude ~ /best-practices/paralelo</span>
+  </div>
+  <div class="slide-content">
+    <div class="prompt">$ git worktree list</div>
+    <h1>Trabalhando em Paralelo</h1>
+    <h2>Múltiplos agentes no mesmo codebase</h2>
+    <p>Cada sessão do terminal é um agente <strong>independente</strong>. O problema: dois agentes editando o mesmo arquivo ao mesmo tempo gera conflito.</p>
+    <h3>Git Worktrees — a solução</h3>
+    <p>Uma <strong>worktree</strong> é uma cópia de trabalho do seu repo em outro diretório, <strong>compartilhando o mesmo .git</strong>. Cada worktree fica em uma branch diferente, sem clonar nada. É instantâneo.</p>
+    <pre><code><span style="color:var(--ctp-green)"># Criar uma worktree para cada tarefa (instantâneo, sem clone)</span>
+git worktree add ../feature-auth feature/auth
+git worktree add ../feature-api feature/api
+
+<span style="color:var(--ctp-green)"># Listar worktrees ativas</span>
+<span style="color:var(--ctp-overlay0)">$ git worktree list</span>
+/home/user/projeto          abc1234 [main]
+/home/user/feature-auth     def5678 [feature/auth]
+/home/user/feature-api      ghi9012 [feature/api]
+
+<span style="color:var(--ctp-green)"># Remover quando terminar</span>
+git worktree remove ../feature-auth</code></pre>
+    <p><strong>Skill para worktrees</strong>: um markdown que ensina o agente a criar worktrees automaticamente. Se está na main, cria uma worktree nova antes de começar.</p>
+    <table>
+      <tr><th>Tab 1</th><th>Tab 2</th><th>Tab 3</th></tr>
+      <tr><td>Implementando feature A</td><td>Revisando PR do colega</td><td>Criando tickets no Linear</td></tr>
+      <tr><td><code>../feature-a/</code></td><td>plan mode (read-only)</td><td>MCP Linear</td></tr>
+    </table>
+    <p>Configure o terminal para <strong>notificar</strong> quando cada agente terminar. Você pode tomar café e voltar quando a notificação chegar.</p>
+  </div>
+</section>
+
+<!-- Slide 20: Parte 4 Divider -->
+<section class="slide part-divider" id="s20">
+  <div class="terminal-bar">
+    <div class="terminal-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div>
+    <span class="terminal-title">claude ~ /agentic</span>
+  </div>
+  <div class="slide-content">
+    <div class="ascii-art" style="color:var(--ctp-lavender); margin-bottom:20px;">
+╔═══════════════════════════════╗
+║         PARTE  4              ║
+╚═══════════════════════════════╝</div>
+    <h1>A Consequência: Workflows Agênticos</h1>
+  </div>
+</section>
+
+<!-- Slide 21: Do Individual ao Time -->
+<section class="slide" id="s21">
+  <div class="terminal-bar">
+    <div class="terminal-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div>
+    <span class="terminal-title">claude ~ /agentic/escala</span>
+  </div>
+  <div class="slide-content">
+    <div class="prompt">$ claude "escale para o time"</div>
+    <h1>Do Individual ao Time</h1>
+    <h2>Quando o fluxo amadurece, a automação e natural</h2>
+    <p>Tudo que vimos até aqui é o fluxo <strong>individual</strong>. Quando o processo está maduro:</p>
+    <pre><code class="ascii-art"><span style="color:var(--ctp-green)">Fluxo individual bem feito</span>
+    │
+    ├──► CI/CD automatizado com agentes
+    ├──► Code review automático em cada PR
+    ├──► Failure analysis em falhas de CI
+    ├──► Test generation a partir de specs
+    └──► Release automation com confidence score</code></pre>
+    <h3>Exemplos reais:</h3>
+    <table>
+      <tr><th>Projeto</th><th>O que faz</th></tr>
+      <tr><td><strong>QualityFlow</strong> (Red Hat QE-DS)</td><td>Pipeline Jira → STP → STD → Go/Python tests. 4 commands, 7 agents, 19 skills</td></tr>
+      <tr><td><strong>OSSM Agentic SDLC</strong></td><td>5 agentes: Context-Collector, Test-Gen, Failure-Analysis, PR-Reviewer, Release-Assistant</td></tr>
+      <tr><td><strong>Kiali</strong></td><td>Code-reviewer reference docs no upstream</td></tr>
+    </table>
+    <p>A chave: <strong>contextualização primeiro</strong>, automação depois.</p>
+  </div>
+</section>
+
+<!-- Slide 22: Agentic Workflows em CI/CD -->
+<section class="slide" id="s22">
+  <div class="terminal-bar">
+    <div class="terminal-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div>
+    <span class="terminal-title">claude ~ /agentic/cicd</span>
+  </div>
+  <div class="slide-content">
+    <div class="prompt">$ gh workflow list</div>
+    <h1>Agentic Workflows em CI/CD</h1>
+    <h2>Agentes rodando na pipeline, não só na sua máquina</h2>
+    <div class="columns">
+      <div>
+        <h3>GitHub Actions + Claude Code</h3>
+        <p><code>anthropics/claude-code-action</code> — 7.2K ⭐</p>
+        <ul>
+          <li>Code review automático em cada PR</li>
+          <li>Triagem e rotulação de issues</li>
+          <li><code>@claude</code> em issues gera implementação</li>
+          <li>~$15-25/mês para times pequenos</li>
+        </ul>
+        <h3>Code-Reviewer Plugin</h3>
+        <p>3 fases em paralelo:</p>
+        <ul>
+          <li>Adversarial (corretude, segurança)</li>
+          <li>Style (convenções do projeto)</li>
+          <li>Testing (cobertura, edge cases)</li>
+        </ul>
+      </div>
+      <div>
+        <h3>GitHub Next: Agentic Workflows</h3>
+        <p>Comportamentos de repositório em <strong>linguagem natural</strong> → GitHub Actions YAML</p>
+        <ul>
+          <li>Agnóstico ao coding agent</li>
+          <li>Auditável e versionado</li>
+          <li>Triagem de issues</li>
+          <li>QA contínuo</li>
+          <li>Docs contínua</li>
+        </ul>
+        <h3>CI-as-a-Runtime (OSSM)</h3>
+        <p>Ambientes efêmeros no OpenShift onde agentes rodam com compute e permissoes escopadas.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Slide 23: Próximos Passos -->
+<section class="slide" id="s23">
+  <div class="terminal-bar">
+    <div class="terminal-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div>
+    <span class="terminal-title">claude ~ /próximos-passos</span>
+  </div>
+  <div class="slide-content">
+    <div class="prompt">$ claude "por onde começar?"</div>
+    <h1>Próximos Passos</h1>
+    <h2>Por onde começar</h2>
+    <ol>
+      <li><strong>Crie seu CLAUDE.md</strong> — 10 minutos que mudam toda sessão futura</li>
+      <li><strong>Contextualize seus repos</strong> — architecture.md + CONTRIBUTING.md</li>
+      <li><strong>Adote Spec Driven Development</strong> — defina o problema antes de codar</li>
+      <li><strong>Crie um PRD</strong> antes de features grandes — milestones com checkboxes</li>
+      <li><strong>Use plan mode</strong> — aprove o plano antes de dar autonomia</li>
+      <li><strong>De ferramentas de verificação</strong> — testes, linter, build</li>
+      <li><strong>Instale hooks</strong> para guardrails automáticos</li>
+      <li><strong>Depois</strong> — e só depois — escale para automação com CI/CD</li>
+    </ol>
+    <blockquote>"A ordem importa: primeiro o fluxo individual, depois o fluxo do time. Automatizar um processo ruim só escala os problemas."</blockquote>
+  </div>
+</section>
+
+<!-- Slide 24: Obrigado -->
+<section class="slide lead" id="s24">
+  <div class="terminal-bar">
+    <div class="terminal-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div>
+    <span class="terminal-title">claude ~ /obrigado</span>
+  </div>
+  <div class="slide-content">
+    <div class="ascii-art green" style="font-size:0.55em; margin-bottom:24px;">
+ ██████╗ ██████╗ ██████╗ ██╗ ██████╗  █████╗ ██████╗  ██████╗ ██╗
+██╔═══██╗██╔══██╗██╔══██╗██║██╔════╝ ██╔══██╗██╔══██╗██╔═══██╗██║
+██║   ██║██████╔╝██████╔╝██║██║  ███╗███████║██║  ██║██║   ██║██║
+██║   ██║██╔══██╗██╔══██╗██║██║   ██║██╔══██║██║  ██║██║   ██║╚═╝
+╚██████╔╝██████╔╝██║  ██║██║╚██████╔╝██║  ██║██████╔╝╚██████╔╝██╗
+ ╚═════╝ ╚═════╝ ╚═╝  ╚═╝╚═╝ ╚═════╝ ╚═╝  ╚═╝╚═════╝  ╚═════╝ ╚═╝</div>
+    <h1>Perguntas?</h1>
+    <h2>Rafael Zago</h2>
+    <p style="color:var(--ctp-subtext0); font-size:0.95em; margin-top:4px;">Senior Software Automation Engineer · Red Hat</p>
+    <p style="margin-top:20px; color:var(--ctp-teal); font-size:1em;">
+      <code>rafaelvzago.com</code>
+    </p>
+  </div>
+</section>
+
+<!-- Slide 25: Referências -->
+<section class="slide" id="s25">
+  <div class="terminal-bar">
+    <div class="terminal-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div>
+    <span class="terminal-title">claude ~ /referencias</span>
+  </div>
+  <div class="slide-content" style="font-size:0.85em;">
+    <div class="prompt">$ cat REFERENCES.md</div>
+    <h1>Referências</h1>
+    <div class="columns">
+      <div>
+        <h3>Documentação Oficial</h3>
+        <ul>
+          <li>Claude Code Overview: <code>docs.anthropic.com/en/docs/claude-code</code></li>
+          <li>Best Practices: <code>code.claude.com/docs/en/best-practices</code></li>
+          <li>Hooks Guide: <code>code.claude.com/docs/en/hooks-guide</code></li>
+          <li>Subagents: <code>code.claude.com/docs/en/sub-agents</code></li>
+          <li>GitHub Actions: <code>code.claude.com/docs/en/github-actions</code></li>
+          <li>Settings: <code>docs.anthropic.com/en/docs/claude-code/settings</code></li>
+        </ul>
+        <h3>Projetos e Comunidade</h3>
+        <ul>
+          <li>Claude Code (117K+ ⭐): <code>github.com/anthropics/claude-code</code></li>
+          <li>claude-code-action (7.2K ⭐): <code>github.com/anthropics/claude-code-action</code></li>
+          <li>Everything Claude Code (140K+ ⭐): <code>github.com/pcoulbourne/everything-claude-code</code></li>
+          <li>Code-Reviewer Plugin: <code>github.com/TommasoBagassi/code-reviewer</code></li>
+        </ul>
+      </div>
+      <div>
+        <h3>Referência do Time</h3>
+        <ul>
+          <li>QualityFlow: <code>gitlab.cee.redhat.com/qe-ds/qualityflow</code></li>
+          <li>OSSM Agentic AI: OSSM-12935 Jira Epic</li>
+          <li>CICaddy: <code>developers.redhat.com/.../cicaddy</code></li>
+          <li>Kiali: <code>github.com/kiali/kiali/.claude/</code></li>
+          <li>GitHub Next: <code>githubnext.com/projects/agentic-workflows</code></li>
+        </ul>
+        <h3>Artigos</h3>
+        <ul>
+          <li>"Claude Code Tips I Wish I'd Had" — marmelab.com</li>
+          <li>"15 Tips from 6 Projects" — aiorg.dev</li>
+          <li>"Agentic by Default" — JSNation 2026</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="slide-indicator" id="indicator">[1/25]</div>
+<div class="nav-hint"><a href="https://www.rafaelvzago.com" target="_blank" style="color:inherit; text-decoration:none;">rafaelvzago.com</a> · Apache License 2.0</div>
+
+<script>
+var goTo, navPrev, navNext;
+(function() {
+  const slides = document.querySelectorAll('.slide');
+  const indicator = document.getElementById('indicator');
+  let current = 0;
+  const total = slides.length;
+
+  function show(n) {
+    if (n < 0 || n >= total) return;
+    slides[current].classList.remove('active');
+    current = n;
+    slides[current].classList.add('active');
+    indicator.textContent = '[' + (current + 1) + '/' + total + ']';
+    slides[current].querySelector('.slide-content').scrollTop = 0;
+  }
+
+  goTo = show;
+  navPrev = function() { show(current - 1); };
+  navNext = function() { show(current + 1); };
+
+  slides.forEach(function(slide, idx) {
+    if (idx <= 2) return;
+    var footer = document.createElement('div');
+    footer.className = 'slide-footer';
+    footer.innerHTML = '<a onclick="goTo(0)" title="Idioma">🌐</a> · <a onclick="navPrev()" title="Anterior">◀</a> <a onclick="navNext()" title="Próximo">▶</a> · <a onclick="goTo(2)" title="Agenda">&#8962;</a>';
+    slide.appendChild(footer);
+  });
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
+      e.preventDefault(); show(current + 1);
+    } else if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+      e.preventDefault(); show(current - 1);
+    } else if (e.key === 'Home') {
+      e.preventDefault(); show(0);
+    } else if (e.key === 'End') {
+      e.preventDefault(); show(total - 1);
+    }
+  });
+
+  document.addEventListener('click', function(e) {
+    if (e.target.closest('a, .agenda-link, .slide-footer')) return;
+    if (e.clientX > window.innerWidth / 2) show(current + 1);
+    else show(current - 1);
+  });
+
+  show(window.location.hash === '#start' ? 1 : 0);
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Claude Code — presentations & best practices</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect x='20' y='30' width='60' height='45' rx='10' fill='%238aadf4'/><rect x='30' y='45' width='12' height='12' rx='3' fill='%2324273a'/><rect x='58' y='45' width='12' height='12' rx='3' fill='%2324273a'/><rect x='40' y='62' width='20' height='4' rx='2' fill='%2324273a'/><rect x='42' y='15' width='16' height='18' rx='4' fill='%23a6da95'/><rect x='48' y='5' width='4' height='12' fill='%23a6da95'/><circle cx='50' cy='3' r='4' fill='%23a6da95'/><rect x='10' y='45' width='10' height='5' rx='2' fill='%238aadf4'/><rect x='80' y='45' width='10' height='5' rx='2' fill='%238aadf4'/><rect x='30' y='75' width='12' height='12' rx='2' fill='%238aadf4'/><rect x='58' y='75' width='12' height='12' rx='2' fill='%238aadf4'/></svg>">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ctp-peach: #f5a97f; --ctp-green: #a6da95; --ctp-teal: #8bd5ca;
+  --ctp-sky: #91d7e3; --ctp-sapphire: #7dc4e4; --ctp-blue: #8aadf4;
+  --ctp-mauve: #c6a0f6; --ctp-red: #ed8796; --ctp-yellow: #eed49f;
+  --ctp-text: #cad3f5; --ctp-subtext1: #b8c0e0; --ctp-subtext0: #a5adcb;
+  --ctp-overlay1: #8087a2; --ctp-overlay0: #6e738d;
+  --ctp-surface2: #5b6078; --ctp-surface1: #494d64; --ctp-surface0: #363a4f;
+  --ctp-base: #24273a; --ctp-mantle: #1e2030; --ctp-crust: #181926;
+}
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'JetBrains Mono', monospace;
+  background: var(--ctp-crust); color: var(--ctp-text);
+  line-height: 1.7; font-size: 15px;
+}
+a { color: var(--ctp-teal); text-decoration: none; }
+a:hover { text-decoration: underline; color: var(--ctp-sky); }
+strong { color: var(--ctp-peach); }
+.terminal-window {
+  max-width: 900px; margin: 40px auto;
+  background: var(--ctp-base); border-radius: 12px;
+  border: 1px solid var(--ctp-surface0); overflow: hidden;
+}
+.terminal-bar {
+  background: var(--ctp-mantle); padding: 10px 16px;
+  display: flex; align-items: center; gap: 8px;
+  border-bottom: 1px solid var(--ctp-surface0);
+}
+.terminal-dots { display: flex; gap: 6px; }
+.terminal-dots span { width: 12px; height: 12px; border-radius: 50%; }
+.dot-red { background: var(--ctp-red); }
+.dot-yellow { background: var(--ctp-yellow); }
+.dot-green { background: var(--ctp-green); }
+.terminal-title { color: var(--ctp-overlay1); margin-left: 12px; font-size: 12px; }
+.terminal-body { padding: 32px 40px; }
+.ascii-art {
+  color: var(--ctp-green); font-size: 0.55em; line-height: 1.2;
+  white-space: pre; font-family: 'JetBrains Mono', monospace;
+  text-align: center; margin-bottom: 24px;
+}
+header { text-align: center; padding-bottom: 16px; border-bottom: 1px solid var(--ctp-surface0); margin-bottom: 32px; }
+header h1 { color: var(--ctp-blue); font-size: 1.6em; margin-bottom: 4px; }
+header .sub { color: var(--ctp-mauve); font-size: 0.9em; font-weight: 400; margin-bottom: 12px; }
+header .author { color: var(--ctp-overlay1); font-size: 0.85em; }
+section { margin-bottom: 32px; }
+section h2 {
+  color: var(--ctp-blue); font-size: 1.2em; margin-bottom: 16px;
+  padding-bottom: 6px; border-bottom: 2px solid var(--ctp-surface0);
+}
+.cards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.card {
+  background: var(--ctp-mantle); border: 1px solid var(--ctp-surface0);
+  border-radius: 8px; padding: 20px; transition: all 0.2s;
+  text-decoration: none; color: var(--ctp-text); display: block;
+}
+.card:hover {
+  border-color: var(--ctp-blue); transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(138,173,244,0.15); text-decoration: none;
+}
+.card .flag { font-size: 2em; margin-bottom: 8px; display: block; }
+.card h3 { color: var(--ctp-blue); font-size: 1.1em; margin-bottom: 4px; }
+.card .meta { color: var(--ctp-overlay0); font-size: 0.8em; margin-bottom: 8px; }
+.card p { color: var(--ctp-subtext1); font-size: 0.85em; }
+.about-text { color: var(--ctp-subtext1); font-size: 0.9em; margin-bottom: 12px; }
+.ref-group { margin-bottom: 16px; }
+.ref-group h3 { color: var(--ctp-sapphire); font-size: 0.9em; margin-bottom: 6px; }
+.ref-group ul { list-style: none; margin: 0; padding: 0; }
+.ref-group li { padding: 4px 0; font-size: 0.82em; }
+footer {
+  text-align: center; padding: 20px 0; margin-top: 16px;
+  border-top: 1px solid var(--ctp-surface0);
+  color: var(--ctp-surface2); font-size: 0.75em;
+}
+footer a { color: var(--ctp-overlay0); }
+@media (max-width: 700px) {
+  .cards { grid-template-columns: 1fr; }
+  .terminal-body { padding: 20px; }
+  .ascii-art { font-size: 0.35em; }
+}
+</style>
+</head>
+<body>
+
+<div class="terminal-window">
+  <div class="terminal-bar">
+    <div class="terminal-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div>
+    <span class="terminal-title">claude ~ /presentations</span>
+  </div>
+  <div class="terminal-body">
+
+    <div class="ascii-art">
+ ██████╗██╗      █████╗ ██╗   ██╗██████╗ ███████╗     ██████╗ ██████╗ ██████╗ ███████╗
+██╔════╝██║     ██╔══██╗██║   ██║██╔══██╗██╔════╝    ██╔════╝██╔═══██╗██╔══██╗██╔════╝
+██║     ██║     ███████║██║   ██║██║  ██║█████╗      ██║     ██║   ██║██║  ██║█████╗
+██║     ██║     ██╔══██║██║   ██║██║  ██║██╔══╝      ██║     ██║   ██║██║  ██║██╔══╝
+╚██████╗███████╗██║  ██║╚██████╔╝██████╔╝███████╗    ╚██████╗╚██████╔╝██████╔╝███████╗
+ ╚═════╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚═════╝ ╚══════╝     ╚═════╝ ╚═════╝ ╚═════╝ ╚══════╝</div>
+
+    <header>
+      <h1>Claude Code para desenvolvimento open source</h1>
+      <h1>Claude Code for open source development</h1>
+      <p class="author"><strong>Rafael Zago</strong> · Senior Software Automation Engineer · Red Hat</p>
+    </header>
+
+    <section>
+      <p class="about-text">Eu uso Claude Code no dia a dia para trabalhar em projetos open source na Red Hat. Esses slides são o material que eu uso nas minhas palestras e o que aplico no meu fluxo de trabalho real. Eu atualizo conforme descubro coisas novas ou o ecossistema muda.</p>
+      <p class="about-text">I use Claude Code daily for open source work at Red Hat. These slides are what I use in my talks and what I actually apply in my day-to-day workflow. I update this as I find new things or the ecosystem changes.</p>
+      <p class="about-text" style="color:var(--ctp-overlay0); font-size:0.8em;">Apache License 2.0</p>
+    </section>
+
+    <section>
+      <h2>Apresentações / Presentations</h2>
+      <div class="cards">
+        <a class="card" href="claude-code-open-source.html#start">
+          <span class="flag">🇧🇷</span>
+          <h3>Português</h3>
+          <p class="meta">33 slides · Catppuccin Macchiato</p>
+          <p>Como eu organizo meu fluxo de trabalho: do PRD ao PR, passando por TDD, code review e MCP.</p>
+        </a>
+        <a class="card" href="claude-code-open-source-en.html#start">
+          <span class="flag">🇺🇸</span>
+          <h3>English</h3>
+          <p class="meta">33 slides · Catppuccin Macchiato</p>
+          <p>How I organize my workflow: from PRD to PR, through TDD, code review and MCP.</p>
+        </a>
+      </div>
+    </section>
+
+    <section>
+      <h2>Referências / References</h2>
+      <div class="ref-group">
+        <h3>Docs</h3>
+        <ul>
+          <li><a href="https://docs.anthropic.com/en/docs/claude-code" target="_blank">Claude Code Overview</a></li>
+          <li><a href="https://code.claude.com/docs/en/best-practices" target="_blank">Best Practices</a></li>
+          <li><a href="https://code.claude.com/docs/en/hooks-guide" target="_blank">Hooks Guide</a></li>
+          <li><a href="https://code.claude.com/docs/en/sub-agents" target="_blank">Subagents</a></li>
+          <li><a href="https://code.claude.com/docs/en/commands" target="_blank">Commands</a></li>
+          <li><a href="https://code.claude.com/docs/en/github-actions" target="_blank">GitHub Actions</a></li>
+          <li><a href="https://agents.md" target="_blank">AGENTS.md</a></li>
+          <li><a href="https://github.com/anthropics/skills" target="_blank">anthropics/skills</a></li>
+        </ul>
+      </div>
+      <div class="ref-group">
+        <h3>Projetos / Projects</h3>
+        <ul>
+          <li><a href="https://github.com/anthropics/claude-code" target="_blank">Claude Code</a> · 117K+ ⭐</li>
+          <li><a href="https://github.com/anthropics/claude-code-action" target="_blank">claude-code-action</a> · 7.2K ⭐</li>
+          <li><a href="https://github.com/pcoulbourne/everything-claude-code" target="_blank">Everything Claude Code</a> · 140K+ ⭐</li>
+          <li><a href="https://github.com/TommasoBagassi/code-reviewer" target="_blank">Code-Reviewer Plugin</a></li>
+          <li><a href="https://githubnext.com/projects/agentic-workflows/" target="_blank">GitHub Next Agentic Workflows</a></li>
+        </ul>
+      </div>
+    </section>
+
+    <footer>
+      <a href="https://www.rafaelvzago.com" target="_blank">rafaelvzago.com</a> · Apache License 2.0
+    </footer>
+
+  </div>
+</div>
+
+</body>
+</html>
