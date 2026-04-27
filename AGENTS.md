@@ -27,7 +27,7 @@
    ```
    Todos os 4 valores devem ser iguais.
 
-2. `preventDefault` intacto (exatamente 4 por arquivo):
+2. `preventDefault` intacto (exatamente 7 por arquivo):
    ```
    grep -c 'preventDefault' claude-code-open-source.html
    grep -c 'preventDefault' claude-code-open-source-en.html
