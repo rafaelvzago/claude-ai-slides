@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-9J3YRPN8EN"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-9J3YRPN8EN');
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Claude Code — presentations & best practices</title>
@@ -57,7 +65,7 @@ section h2 {
   color: var(--ctp-blue); font-size: 1.2em; margin-bottom: 16px;
   padding-bottom: 6px; border-bottom: 2px solid var(--ctp-surface0);
 }
-.cards { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.cards { display: grid; grid-template-columns: 1fr; gap: 16px; }
 .card {
   background: var(--ctp-mantle); border: 1px solid var(--ctp-surface0);
   border-radius: 8px; padding: 20px; transition: all 0.2s;
@@ -82,6 +90,15 @@ footer {
   color: var(--ctp-surface2); font-size: 0.75em;
 }
 footer a { color: var(--ctp-overlay0); }
+.lang-toggle { margin-left: auto; display: flex; gap: 4px; }
+.lang-btn {
+  background: transparent; border: 2px solid transparent; border-radius: 6px;
+  font-size: 1.4em; cursor: pointer; padding: 2px 6px; transition: all 0.2s;
+}
+.lang-btn:hover { border-color: var(--ctp-overlay0); }
+.lang-btn.active { border-color: var(--ctp-blue); background: var(--ctp-surface0); }
+[data-lang] { display: none; }
+[data-lang].show { display: revert; }
 @media (max-width: 700px) {
   .cards { grid-template-columns: 1fr; }
   .terminal-body { padding: 20px; }
@@ -95,6 +112,10 @@ footer a { color: var(--ctp-overlay0); }
   <div class="terminal-bar">
     <div class="terminal-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div>
     <span class="terminal-title">claude ~ /presentations</span>
+    <div class="lang-toggle">
+      <button onclick="setLang('pt')" id="btn-pt" class="lang-btn active" title="Português">🇧🇷</button>
+      <button onclick="setLang('en')" id="btn-en" class="lang-btn" title="English">🇺🇸</button>
+    </div>
   </div>
   <div class="terminal-body">
 
@@ -107,27 +128,28 @@ footer a { color: var(--ctp-overlay0); }
  ╚═════╝╚══════╝╚═╝  ╚═╝ ╚═════╝ ╚═════╝ ╚══════╝     ╚═════╝ ╚═════╝ ╚═════╝ ╚══════╝</div>
 
     <header>
-      <h1>Claude Code para desenvolvimento open source</h1>
-      <h1>Claude Code for open source development</h1>
+      <h1 data-lang="pt">Claude Code para desenvolvimento open source</h1>
+      <h1 data-lang="en">Claude Code for open source development</h1>
       <p class="author"><strong>Rafael Zago</strong> · Senior Software Automation Engineer · Red Hat</p>
     </header>
 
     <section>
-      <p class="about-text">Eu uso Claude Code no dia a dia para trabalhar em projetos open source na Red Hat. Esses slides são o material que eu uso nas minhas palestras e o que aplico no meu fluxo de trabalho real. Eu atualizo conforme descubro coisas novas ou o ecossistema muda.</p>
-      <p class="about-text">I use Claude Code daily for open source work at Red Hat. These slides are what I use in my talks and what I actually apply in my day-to-day workflow. I update this as I find new things or the ecosystem changes.</p>
+      <p class="about-text" data-lang="pt">Eu uso Claude Code no dia a dia para trabalhar em projetos open source na Red Hat. Esses slides são o material que eu uso nas minhas palestras e o que aplico no meu fluxo de trabalho real. Eu atualizo conforme descubro coisas novas ou o ecossistema muda.</p>
+      <p class="about-text" data-lang="en">I use Claude Code daily for open source work at Red Hat. These slides are what I use in my talks and what I actually apply in my day-to-day workflow. I update this as I find new things or the ecosystem changes.</p>
       <p class="about-text" style="color:var(--ctp-overlay0); font-size:0.8em;">Apache License 2.0</p>
     </section>
 
     <section>
-      <h2>Apresentações / Presentations</h2>
+      <h2 data-lang="pt">Apresentações</h2>
+      <h2 data-lang="en">Presentations</h2>
       <div class="cards">
-        <a class="card" href="claude-code-open-source.html#start">
+        <a class="card" href="claude-code-open-source.html#start" data-lang="pt">
           <span class="flag">🇧🇷</span>
           <h3>Português</h3>
           <p class="meta">33 slides · Catppuccin Macchiato</p>
           <p>Como eu organizo meu fluxo de trabalho: do PRD ao PR, passando por TDD, code review e MCP.</p>
         </a>
-        <a class="card" href="claude-code-open-source-en.html#start">
+        <a class="card" href="claude-code-open-source-en.html#start" data-lang="en">
           <span class="flag">🇺🇸</span>
           <h3>English</h3>
           <p class="meta">33 slides · Catppuccin Macchiato</p>
@@ -137,7 +159,8 @@ footer a { color: var(--ctp-overlay0); }
     </section>
 
     <section>
-      <h2>Referências / References</h2>
+      <h2 data-lang="pt">Referências</h2>
+      <h2 data-lang="en">References</h2>
       <div class="ref-group">
         <h3>Docs</h3>
         <ul>
@@ -152,7 +175,8 @@ footer a { color: var(--ctp-overlay0); }
         </ul>
       </div>
       <div class="ref-group">
-        <h3>Projetos / Projects</h3>
+        <h3 data-lang="pt">Projetos</h3>
+        <h3 data-lang="en">Projects</h3>
         <ul>
           <li><a href="https://github.com/anthropics/claude-code" target="_blank">Claude Code</a> · 117K+ ⭐</li>
           <li><a href="https://github.com/anthropics/claude-code-action" target="_blank">claude-code-action</a> · 7.2K ⭐</li>
@@ -170,5 +194,17 @@ footer a { color: var(--ctp-overlay0); }
   </div>
 </div>
 
+<script>
+function setLang(lang) {
+  document.querySelectorAll('[data-lang]').forEach(function(el) {
+    el.classList.toggle('show', el.dataset.lang === lang);
+  });
+  document.getElementById('btn-pt').classList.toggle('active', lang === 'pt');
+  document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+  document.documentElement.lang = lang === 'pt' ? 'pt-BR' : 'en';
+  localStorage.setItem('lang', lang);
+}
+setLang(localStorage.getItem('lang') || 'pt');
+</script>
 </body>
 </html>
