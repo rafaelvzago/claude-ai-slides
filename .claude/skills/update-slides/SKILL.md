@@ -38,6 +38,8 @@ description: >
    ```
    Must be exactly 4.
 
+7. Run `/fix-accentuation` to correct any PT-BR accentuation issues introduced by the changes
+
 ## Rules
 
 - Always update BOTH PT-BR and EN files
