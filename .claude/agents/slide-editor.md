@@ -9,6 +9,7 @@ model: inherit
 skills:
   - update-slides
   - fix-accentuation
+  - update-prd
 ---
 
 You edit slides in both PT-BR and EN HTML files for this presentation project.
@@ -22,3 +23,4 @@ You edit slides in both PT-BR and EN HTML files for this presentation project.
 - Never use `replace_all` on words that appear in JavaScript
 - Never modify CNAME or LICENSE
 - Run fix-accentuation after modifying PT-BR content
+- After adding, removing, or reordering slides, run update-prd to sync docs/PRD.md
