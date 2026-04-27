@@ -1,6 +1,14 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-9J3YRPN8EN"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-9J3YRPN8EN');
+</script>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Claude Code: Um Fluxo de Desenvolvimento Saudável para Open Source</title>
@@ -136,15 +144,6 @@ tr:hover td { background: rgba(54,58,79,0.5); }
 .ascii-art.mauve { color: var(--ctp-mauve); }
 .ascii-art.peach { color: var(--ctp-peach); }
 
-.slide-indicator {
-  position: fixed; bottom: 12px; right: 20px;
-  color: var(--ctp-overlay0); font-size: 12px; z-index: 100;
-}
-.nav-hint {
-  position: fixed; bottom: 12px; left: 20px;
-  color: var(--ctp-surface2); font-size: 11px; z-index: 100;
-}
-
 .slide.part-divider .slide-content {
   justify-content: center; align-items: center; text-align: center;
 }
@@ -152,14 +151,29 @@ tr:hover td { background: rgba(54,58,79,0.5); }
 .slide.part-divider h2 { color: var(--ctp-subtext0); }
 
 .slide-footer {
-  position: absolute; bottom: 10px; left: 50%;
-  transform: translateX(-50%);
-  font-size: 13px; z-index: 10;
+  display: flex; justify-content: space-between; align-items: center;
+  background: var(--ctp-mantle); border-top: 1px solid var(--ctp-surface0);
+  padding: 6px 16px; flex-shrink: 0; font-size: 12px; z-index: 10;
 }
-.slide-footer a {
+.footer-left {
+  color: var(--ctp-surface2); font-size: 11px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  min-width: 0;
+}
+.footer-left a { color: inherit; text-decoration: none; }
+.footer-left a:hover { color: var(--ctp-teal); text-decoration: underline; }
+.footer-nav { display: flex; gap: 4px; flex-shrink: 0; }
+.footer-nav a {
+  display: inline-flex; align-items: center; justify-content: center;
+  min-width: 40px; min-height: 36px; border-radius: 6px;
   color: var(--ctp-overlay0); text-decoration: none; cursor: pointer;
+  font-size: 14px; transition: background 0.15s;
 }
-.slide-footer a:hover { color: var(--ctp-teal); text-decoration: underline; }
+.footer-nav a:hover { background: var(--ctp-surface0); color: var(--ctp-teal); }
+.footer-right {
+  color: var(--ctp-overlay0); font-size: 12px;
+  white-space: nowrap; flex-shrink: 0;
+}
 
 .agenda-link {
   color: var(--ctp-teal); text-decoration: none; cursor: pointer;
@@ -176,6 +190,33 @@ tr:hover td { background: rgba(54,58,79,0.5); }
 .lang-btn:hover {
   background: var(--ctp-blue); color: var(--ctp-crust);
   text-decoration: none; border-color: var(--ctp-blue);
+}
+
+@media (max-width: 768px) {
+  .slide-content { padding: 24px 24px 16px; }
+  .columns { grid-template-columns: 1fr; }
+  h1 { font-size: 1.6em; }
+  .slide.lead h1 { font-size: 1.8em; }
+  h2 { font-size: 1em; }
+  pre { font-size: 0.72em; padding: 12px; }
+  .ascii-art { font-size: 0.5em; }
+  .footer-left { font-size: 10px; }
+  .footer-right { font-size: 11px; }
+  .footer-nav a { min-width: 36px; min-height: 34px; font-size: 13px; }
+}
+@media (max-width: 480px) {
+  .slide-content { padding: 16px 12px 12px; overflow-x: auto; }
+  h1 { font-size: 1.3em; }
+  .slide.lead h1 { font-size: 1.5em; }
+  h2 { font-size: 0.9em; }
+  p { font-size: 0.82em; }
+  ul, ol { font-size: 0.8em; margin-left: 16px; }
+  pre { font-size: 0.65em; padding: 10px; }
+  table { font-size: 0.72em; }
+  .ascii-art { font-size: 0.35em; }
+  .terminal-title { display: none; }
+  .footer-left { display: none; }
+  .slide-footer { justify-content: center; gap: 16px; }
 }
 </style>
 </head>
@@ -203,11 +244,11 @@ tr:hover td { background: rgba(54,58,79,0.5); }
   </div>
 </section>
 
-<!-- Slide 1: Titulo -->
+<!-- Slide 1: Título -->
 <section class="slide lead" id="s1">
   <div class="terminal-bar">
     <div class="terminal-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div>
-    <span class="terminal-title">claude ~ /apresentacao</span>
+    <span class="terminal-title">claude ~ /apresentação</span>
   </div>
   <div class="slide-content">
     <div class="ascii-art green" style="font-size:0.6em; margin-bottom:24px;">
@@ -372,7 +413,7 @@ cd meu-projeto && claude</code></pre>
 <section class="slide" id="s6">
   <div class="terminal-bar">
     <div class="terminal-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div>
-    <span class="terminal-title">claude ~ /fundamentos/configuracao</span>
+    <span class="terminal-title">claude ~ /fundamentos/configuração</span>
   </div>
   <div class="slide-content">
     <div class="prompt">$ cat CLAUDE.md</div>
@@ -403,7 +444,7 @@ cd meu-projeto && claude</code></pre>
       </div>
     </div>
     <p>O agente le esses arquivos <strong>automaticamente</strong> ao iniciar cada sessão. Sem eles, o agente não tem contexto — e vai chutar.</p>
-    <p>Você pode ter CLAUDE.md <strong>em cada modulo</strong> do projeto. Ex: <strong>Kiali</strong> usa <code>.claude/code-reviewer/reference/</code> no upstream.</p>
+    <p>Você pode ter CLAUDE.md <strong>em cada módulo</strong> do projeto. Projetos grandes usam subpastas como <code>.claude/code-reviewer/reference/</code>.</p>
   </div>
 </section>
 
@@ -437,8 +478,8 @@ cd meu-projeto && claude</code></pre>
 │       │   └── <span style="color:var(--ctp-green)">SKILL.md</span>
 │       └── <span style="color:var(--ctp-blue)">git-worktrees/</span>
 │           └── <span style="color:var(--ctp-green)">SKILL.md</span>
-└── <span style="color:var(--ctp-blue)">src/modulo-a/</span>
-    └── <span style="color:var(--ctp-peach)">CLAUDE.md</span>          <span style="color:var(--ctp-overlay0)">contexto do modulo</span></code></pre>
+└── <span style="color:var(--ctp-blue)">src/módulo-a/</span>
+    └── <span style="color:var(--ctp-peach)">CLAUDE.md</span>          <span style="color:var(--ctp-overlay0)">contexto do módulo</span></code></pre>
       </div>
       <div>
         <table>
@@ -658,7 +699,7 @@ Agents <span style="color:var(--ctp-overlay0)">(atores que rodam diversos skills
     </ol>
     <pre><code><span style="color:var(--ctp-green)">Você:</span> "Esse ticket e sobre refatorar as chamadas blocantes da API
        do Google. A gente usa OpenTelemetry para observabilidade e
-       functional interfaces para injeção de dependencia."
+       functional interfaces para injeção de dependência."
 
 <span style="color:var(--ctp-blue)">Claude:</span> [explora o codebase em paralelo]
         [le 7 patterns, 3 arquivos]
@@ -695,7 +736,7 @@ Agents <span style="color:var(--ctp-overlay0)">(atores que rodam diversos skills
 <span style="color:var(--ctp-mauve)">### Milestones</span>
 - [ ] M0: Criar interfaces e feature flag
 - [ ] M1: Implementar cliente não-blocante
-- [x] M2: Testes unitarios e de integracao
+- [x] M2: Testes unitários e de integração
 - [ ] M3: Migrar chamadas existentes</code></pre>
     <blockquote>"Programação comeca na engenharia. Cada decisao tomada no PRD economiza 4-5 bug fixes la na frente."</blockquote>
   </div>
@@ -840,7 +881,7 @@ Real-time event delivery to clients.
     <p><strong>Mas atenção:</strong></p>
     <ul>
       <li>Você <strong>revisa primeiro</strong>, sem contexto do Claude, para manter a sanidade</li>
-      <li>O agente <strong>complementa</strong> sua revisao — não substitui</li>
+      <li>O agente <strong>complementa</strong> sua revisão — não substitui</li>
       <li>Se você começar a delegar tudo, vai criar o hábito de aceitar tudo</li>
       <li><strong>Revisar código é responsabilidade sua</strong></li>
     </ul>
@@ -1045,7 +1086,7 @@ Real-time event delivery to clients.
         </ul>
         <h3>Human-on-the-Loop</h3>
         <ul>
-          <li>Todo PR gerado requer revisao humana</li>
+          <li>Todo PR gerado requer revisão humana</li>
           <li>Fixes passam por testes antes</li>
           <li>Nunca mutação silenciosa</li>
         </ul>
@@ -1127,7 +1168,7 @@ git worktree remove ../feature-auth</code></pre>
       <tr><th>Projeto</th><th>O que faz</th></tr>
       <tr><td><strong>QualityFlow</strong> (Red Hat QE-DS)</td><td>Pipeline Jira → STP → STD → Go/Python tests. 4 commands, 7 agents, 19 skills</td></tr>
       <tr><td><strong>OSSM Agentic SDLC</strong></td><td>5 agentes: Context-Collector, Test-Gen, Failure-Analysis, PR-Reviewer, Release-Assistant</td></tr>
-      <tr><td><strong>Kiali</strong></td><td>Code-reviewer reference docs no upstream</td></tr>
+      <tr><td><strong>Projeto OSS</strong></td><td>CLAUDE.md com docs de referência para code review</td></tr>
     </table>
     <p>A chave: <strong>contextualização primeiro</strong>, automação depois.</p>
   </div>
@@ -1229,7 +1270,7 @@ git worktree remove ../feature-auth</code></pre>
 <section class="slide" id="s25">
   <div class="terminal-bar">
     <div class="terminal-dots"><span class="dot-red"></span><span class="dot-yellow"></span><span class="dot-green"></span></div>
-    <span class="terminal-title">claude ~ /referencias</span>
+    <span class="terminal-title">claude ~ /referências</span>
   </div>
   <div class="slide-content" style="font-size:0.85em;">
     <div class="prompt">$ cat REFERENCES.md</div>
@@ -1259,7 +1300,7 @@ git worktree remove ../feature-auth</code></pre>
           <li>QualityFlow: <code>gitlab.cee.redhat.com/qe-ds/qualityflow</code></li>
           <li>OSSM Agentic AI: OSSM-12935 Jira Epic</li>
           <li>CICaddy: <code>developers.redhat.com/.../cicaddy</code></li>
-          <li>Kiali: <code>github.com/kiali/kiali/.claude/</code></li>
+          <li>Claude Code Docs: <code>docs.anthropic.com/en/docs/claude-code</code></li>
           <li>GitHub Next: <code>githubnext.com/projects/agentic-workflows</code></li>
         </ul>
         <h3>Artigos</h3>
@@ -1273,37 +1314,45 @@ git worktree remove ../feature-auth</code></pre>
   </div>
 </section>
 
-<div class="slide-indicator" id="indicator">[1/25]</div>
-<div class="nav-hint"><a href="https://www.rafaelvzago.com" target="_blank" style="color:inherit; text-decoration:none;">rafaelvzago.com</a> · Apache License 2.0</div>
-
 <script>
 var goTo, navPrev, navNext;
 (function() {
   const slides = document.querySelectorAll('.slide');
-  const indicator = document.getElementById('indicator');
+  const indicators = [];
   let current = 0;
   const total = slides.length;
+
+  slides.forEach(function(slide, idx) {
+    if (idx <= 2) return;
+    var footer = document.createElement('div');
+    footer.className = 'slide-footer';
+    var ind = document.createElement('div');
+    ind.className = 'footer-right footer-indicator';
+    indicators.push(ind);
+    footer.innerHTML = '<div class="footer-left"><a href="https://www.rafaelvzago.com" target="_blank">rafaelvzago.com</a> · Apache 2.0</div>' +
+      '<div class="footer-nav">' +
+        '<a href="index.html" title="Início">⌂</a>' +
+        '<a onclick="navPrev()" title="Anterior">◀</a>' +
+        '<a onclick="navNext()" title="Próximo">▶</a>' +
+        '<a onclick="goTo(2)" title="Agenda">📖</a>' +
+      '</div>';
+    footer.appendChild(ind);
+    slide.appendChild(footer);
+  });
 
   function show(n) {
     if (n < 0 || n >= total) return;
     slides[current].classList.remove('active');
     current = n;
     slides[current].classList.add('active');
-    indicator.textContent = '[' + (current + 1) + '/' + total + ']';
+    var label = '[' + (current + 1) + '/' + total + ']';
+    indicators.forEach(function(el) { el.textContent = label; });
     slides[current].querySelector('.slide-content').scrollTop = 0;
   }
 
   goTo = show;
   navPrev = function() { show(current - 1); };
   navNext = function() { show(current + 1); };
-
-  slides.forEach(function(slide, idx) {
-    if (idx <= 2) return;
-    var footer = document.createElement('div');
-    footer.className = 'slide-footer';
-    footer.innerHTML = '<a href="index.html" title="Início">⌂</a> · <a onclick="navPrev()" title="Anterior">◀</a> <a onclick="navNext()" title="Próximo">▶</a> · <a onclick="goTo(2)" title="Agenda">📖</a>';
-    slide.appendChild(footer);
-  });
 
   document.addEventListener('keydown', function(e) {
     if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') {
