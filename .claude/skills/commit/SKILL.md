@@ -37,7 +37,7 @@ description: >
    ```
    All 4 values must be equal.
 
-   b. `preventDefault` intact (exactly 4 per file):
+   b. `preventDefault` intact (exactly 7 per file):
    ```
    grep -c 'preventDefault' claude-code-open-source.html
    grep -c 'preventDefault' claude-code-open-source-en.html

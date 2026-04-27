@@ -38,7 +38,7 @@ description: >
 2. Find the corresponding slide in the other language file
 3. Translate only the visible text content
 4. Verify section count matches between both files
-5. Verify `preventDefault` count is exactly 4 in both files
+5. Verify `preventDefault` count is exactly 7 in both files
 
 ## Common PT-BR → EN translations
 

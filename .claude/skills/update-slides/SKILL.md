@@ -36,7 +36,7 @@ description: >
    ```
    grep -c 'preventDefault' file.html
    ```
-   Must be exactly 4.
+   Must be exactly 7.
 
 7. Run `/fix-accentuation` to correct any PT-BR accentuation issues introduced by the changes
 

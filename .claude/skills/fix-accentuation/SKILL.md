@@ -27,7 +27,7 @@ Atua **apenas no texto visível** (conteúdo entre tags HTML), nunca em JavaScri
 
 4. Aplicar as correções usando `Edit` — **um por um**, nunca `replace_all` em palavras que possam aparecer em JavaScript
 
-5. Verificar que `preventDefault` continua intacto (exatamente 4 ocorrências):
+5. Verificar que `preventDefault` continua intacto (exatamente 7 ocorrências):
    ```
    grep -c 'preventDefault' claude-code-open-source.html
    ```
@@ -106,4 +106,4 @@ Atua **apenas no texto visível** (conteúdo entre tags HTML), nunca em JavaScri
 - Nunca modificar atributos HTML (`class`, `id`, `onclick`, `href`, `style`)
 - Nunca modificar URLs, nomes de arquivo ou nomes de comando
 - Nunca usar `replace_all` — corrigir cada ocorrência individualmente com contexto suficiente para ser única
-- Sempre verificar que `preventDefault` continua com exatamente 4 ocorrências após as correções
+- Sempre verificar que `preventDefault` continua com exatamente 7 ocorrências após as correções
