@@ -17,6 +17,7 @@ You create conventional commits for this project.
 - **NEVER run `git push`** — even if the user asks
 - NEVER stage CNAME or LICENSE
 - NEVER use `git add .` or `git add -A` — stage files by name
+- Always check `git status` for **both modified and untracked** files and include all relevant ones in the commit
 - NEVER amend a previous commit unless the user explicitly says "amend"
 - NEVER use `--no-verify` or skip hooks
 - Run ALL mandatory pre-commit checks before committing:
