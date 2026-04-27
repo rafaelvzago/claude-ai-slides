@@ -602,41 +602,42 @@ cd meu-projeto && claude</code></pre>
     <span class="terminal-title">claude ~ /fundamentos/command-exemplo</span>
   </div>
   <div class="slide-content">
-    <div class="prompt">$ claude /help</div>
-    <h1>Exemplo de Command — /review-pr</h1>
+    <div class="prompt">$ claude /review-slides</div>
+    <h1>Exemplo de Command — /review-slides</h1>
     <h2>Commands orquestram skills e agentes</h2>
     <div class="columns">
       <div>
-        <pre><code><span style="color:var(--ctp-blue)"># /review-pr</span>
+        <pre><code><span style="color:var(--ctp-blue)"># /review-slides</span>
 
 <span style="color:var(--ctp-mauve)">## Workflow</span>
-1. Fetch PR diff using GitHub API
-2. Launch 4 agents in parallel:
-   - code-quality-reviewer
-   - performance-reviewer
-   - test-coverage-reviewer
-   - security-reviewer
-3. Consolidate findings
-4. Post comments via API
+1. Count sections in both PT-BR and EN
+2. Verify sections balanced (open == close)
+3. Verify prevent&#8203;Default intact
+   (exactly 7 occurrences per file)
+4. Check for unaccented PT-BR words
+5. Verify agenda goTo() indices
+6. Report findings
 
 <span style="color:var(--ctp-mauve)">## Usage</span>
-/review-pr &lt;PR_URL&gt;
-/review-pr   <span style="color:var(--ctp-overlay0)">(auto-detect branch PR)</span></code></pre>
+/review-slides</code></pre>
       </div>
       <div>
-        <h3>Commands úteis (built-in)</h3>
+        <h3>Commands deste projeto</h3>
         <table>
           <tr><th>Command</th><th>O que faz</th></tr>
+          <tr><td><code>/review-slides</code></td><td>Verificar invariantes dos slides</td></tr>
+          <tr><td><code>/commit</code></td><td>Conventional commit com checks</td></tr>
+          <tr><td><code>/fix-accentuation</code></td><td>Corrigir acentos PT-BR</td></tr>
+          <tr><td><code>/update-prd</code></td><td>Sincronizar PRD com o projeto</td></tr>
+          <tr><td><code>/update-readme</code></td><td>Atualizar árvore do README</td></tr>
+        </table>
+        <h3 style="margin-top:0.8em;">Commands built-in úteis</h3>
+        <table>
           <tr><td><code>/compact</code></td><td>Comprimir contexto</td></tr>
-          <tr><td><code>/rewind</code></td><td>Voltar a um ponto anterior</td></tr>
           <tr><td><code>/plan</code></td><td>Entrar em plan mode</td></tr>
-          <tr><td><code>/batch</code></td><td>Mudanças em paralelo (5-30 unidades)</td></tr>
           <tr><td><code>/review</code></td><td>Revisar PR localmente</td></tr>
           <tr><td><code>/init</code></td><td>Inicializar com CLAUDE.md</td></tr>
-          <tr><td><code>/skills</code></td><td>Listar skills disponíveis</td></tr>
-          <tr><td><code>/mcp</code></td><td>Gerenciar MCP servers</td></tr>
         </table>
-        <p style="font-size:0.8em; color:var(--ctp-overlay1);">Ref: <code>code.claude.com/docs/en/commands</code></p>
       </div>
     </div>
   </div>
