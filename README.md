@@ -41,12 +41,21 @@ claude-ai-slides/
 ├── .claude/
 │   ├── settings.json               # permissions and hooks
 │   ├── commands/
-│   │   └── review-slides.md        # command to review slides
+│   │   ├── commit.md               # /commit — conventional commit workflow
+│   │   ├── fix-accentuation.md     # /fix-accentuation — fix PT-BR accents
+│   │   ├── review-slides.md        # /review-slides — review slide integrity
+│   │   └── update-readme.md        # /update-readme — sync README structure tree
 │   └── skills/
+│       ├── commit/
+│       │   └── SKILL.md            # conventional commits with pre-commit checks
+│       ├── fix-accentuation/
+│       │   └── SKILL.md            # correct PT-BR accentuation in slides
+│       ├── update-readme/
+│       │   └── SKILL.md            # sync README tree with filesystem
 │       ├── update-slides/
-│       │   └── SKILL.md            # skill to update slides
+│       │   └── SKILL.md            # add, remove, or reorder slides
 │       └── translate/
-│           └── SKILL.md            # skill to translate slides
+│           └── SKILL.md            # sync translations between PT-BR and EN
 ├── CNAME                           # GitHub Pages domain
 └── LICENSE                         # Apache 2.0
 ```
