@@ -652,21 +652,26 @@ cd meu-projeto && claude</code></pre>
     <div class="prompt">$ tree .claude/</div>
     <h1>Skills, Commands e Agents</h1>
     <h2>A hierarquia de instruções — tudo são arquivos markdown</h2>
-    <pre><code class="ascii-art">Skills <span style="color:var(--ctp-overlay0)">(tarefas repetitivas)</span>
-    │   ex: como usar git worktrees, como escrever testes
-    ▼
-Commands <span style="color:var(--ctp-overlay0)">(instruções maiores que usam skills)</span>
-    │   ex: /review-pr — busca diff, lança agentes, posta comentários
-    ▼
-Agents <span style="color:var(--ctp-overlay0)">(atores que rodam diversos skills)</span>
-        ex: code-quality-reviewer, security-reviewer</code></pre>
+    <pre><code class="ascii-art">.claude/
+├── <span style="color:var(--ctp-peach)">agents/</span>                        <span style="color:var(--ctp-overlay0)"># subagentes especializados</span>
+│   ├── <span style="color:var(--ctp-green)">committer.md</span>               <span style="color:var(--ctp-overlay0)"># conventional commits</span>
+│   ├── <span style="color:var(--ctp-green)">accentuation-fixer.md</span>      <span style="color:var(--ctp-overlay0)"># corrige acentos PT-BR</span>
+│   ├── <span style="color:var(--ctp-green)">translator.md</span>              <span style="color:var(--ctp-overlay0)"># sincroniza PT-BR ↔ EN</span>
+│   ├── <span style="color:var(--ctp-green)">readme-updater.md</span>          <span style="color:var(--ctp-overlay0)"># atualiza estrutura do README</span>
+│   └── <span style="color:var(--ctp-green)">slide-editor.md</span>            <span style="color:var(--ctp-overlay0)"># adiciona/remove slides</span>
+├── <span style="color:var(--ctp-blue)">skills/</span>                        <span style="color:var(--ctp-overlay0)"># workflows reutilizáveis</span>
+│   ├── commit/SKILL.md
+│   ├── fix-accentuation/SKILL.md
+│   ├── translate/SKILL.md
+│   ├── update-readme/SKILL.md
+│   └── update-slides/SKILL.md
+└── settings.json</code></pre>
     <table>
-      <tr><th>Tipo</th><th>O que é</th><th>Exemplo</th></tr>
-      <tr><td><strong>Skill</strong></td><td>Instruções para uma tarefa específica</td><td>skills/tdd/SKILL.md</td></tr>
-      <tr><td><strong>Command</strong></td><td>Orquestração que usa skills e agents</td><td>/review-pr, /create-tickets</td></tr>
-      <tr><td><strong>Agent</strong></td><td>Ator especializado com contexto próprio</td><td>code-quality-reviewer, security-reviewer</td></tr>
+      <tr><th>Componente</th><th>Papel</th><th>Exemplo</th></tr>
+      <tr><td><span style="color:var(--ctp-green)"><strong>Agent</strong></span></td><td>Subagente com tools, model e skills</td><td><code>agents/committer.md</code></td></tr>
+      <tr><td><span style="color:var(--ctp-blue)"><strong>Skill</strong></span></td><td>Workflow passo-a-passo reutilizável</td><td><code>skills/commit/SKILL.md</code></td></tr>
     </table>
-    <p>Cada sessão do terminal é um agente independente. Você pode ter <strong>vários rodando em paralelo</strong>, cada um com seu foco.</p>
+    <p><span style="color:var(--ctp-green)">Agents</span> definem <strong>quem faz</strong> (tools + model). <span style="color:var(--ctp-blue)">Skills</span> definem <strong>como fazer</strong> (workflow).</p>
   </div>
 </section>
 
@@ -702,12 +707,12 @@ Agents <span style="color:var(--ctp-overlay0)">(atores que rodam diversos skills
       <li><strong>Regras</strong> — o que pode e o que não pode fazer</li>
       <li><strong>Resultado esperado</strong> — PRs abertos, testes passando, docs atualizados</li>
     </ol>
-    <pre><code><span style="color:var(--ctp-green)">Você:</span> "Esse ticket e sobre refatorar as chamadas blocantes da API
-       do Google. A gente usa OpenTelemetry para observabilidade e
-       functional interfaces para injeção de dependência."
+    <pre><code><span style="color:var(--ctp-green)">Você:</span> "Essa issue é sobre adicionar um slide novo sobre MCP.
+       O projeto é HTML puro com tema Catppuccin Macchiato.
+       Siga o CLAUDE.md e mantenha PT-BR e EN sincronizados."
 
-<span style="color:var(--ctp-blue)">Claude:</span> [explora o codebase em paralelo]
-        [le 7 patterns, 3 arquivos]
+<span style="color:var(--ctp-blue)">Claude:</span> [lê CLAUDE.md, AGENTS.md, skill update-slides]
+        [analisa a estrutura dos 33 slides existentes]
         [propõe um plano detalhado]</code></pre>
     <p>O agente explora, le, entende — e <strong>propõe um plano</strong>. Você não aceita cegamente. Você <strong>revisa o plano</strong>.</p>
   </div>

@@ -652,21 +652,26 @@ cd my-project && claude</code></pre>
     <div class="prompt">$ tree .claude/</div>
     <h1>Skills, Commands and Agents</h1>
     <h2>The instruction hierarchy — everything is markdown files</h2>
-    <pre><code class="ascii-art">Skills <span style="color:var(--ctp-overlay0)">(repetitive tasks)</span>
-    │   e.g.: how to use git worktrees, how to write tests
-    ▼
-Commands <span style="color:var(--ctp-overlay0)">(larger instructions that use skills)</span>
-    │   e.g.: /review-pr — fetches diff, launches agents, posts comments
-    ▼
-Agents <span style="color:var(--ctp-overlay0)">(actors that run multiple skills)</span>
-        e.g.: code-quality-reviewer, security-reviewer</code></pre>
+    <pre><code class="ascii-art">.claude/
+├── <span style="color:var(--ctp-peach)">agents/</span>                        <span style="color:var(--ctp-overlay0)"># specialized subagents</span>
+│   ├── <span style="color:var(--ctp-green)">committer.md</span>               <span style="color:var(--ctp-overlay0)"># conventional commits</span>
+│   ├── <span style="color:var(--ctp-green)">accentuation-fixer.md</span>      <span style="color:var(--ctp-overlay0)"># fix PT-BR accents</span>
+│   ├── <span style="color:var(--ctp-green)">translator.md</span>              <span style="color:var(--ctp-overlay0)"># sync PT-BR ↔ EN</span>
+│   ├── <span style="color:var(--ctp-green)">readme-updater.md</span>          <span style="color:var(--ctp-overlay0)"># update README structure</span>
+│   └── <span style="color:var(--ctp-green)">slide-editor.md</span>            <span style="color:var(--ctp-overlay0)"># add/remove slides</span>
+├── <span style="color:var(--ctp-blue)">skills/</span>                        <span style="color:var(--ctp-overlay0)"># reusable workflows</span>
+│   ├── commit/SKILL.md
+│   ├── fix-accentuation/SKILL.md
+│   ├── translate/SKILL.md
+│   ├── update-readme/SKILL.md
+│   └── update-slides/SKILL.md
+└── settings.json</code></pre>
     <table>
-      <tr><th>Type</th><th>What it is</th><th>Example</th></tr>
-      <tr><td><strong>Skill</strong></td><td>Instructions for a specific task</td><td>skills/tdd/SKILL.md</td></tr>
-      <tr><td><strong>Command</strong></td><td>Orchestration that uses skills and agents</td><td>/review-pr, /create-tickets</td></tr>
-      <tr><td><strong>Agent</strong></td><td>Specialized actor with its own context</td><td>code-quality-reviewer, security-reviewer</td></tr>
+      <tr><th>Component</th><th>Role</th><th>Example</th></tr>
+      <tr><td><span style="color:var(--ctp-green)"><strong>Agent</strong></span></td><td>Subagent with tools, model and skills</td><td><code>agents/committer.md</code></td></tr>
+      <tr><td><span style="color:var(--ctp-blue)"><strong>Skill</strong></span></td><td>Reusable step-by-step workflow</td><td><code>skills/commit/SKILL.md</code></td></tr>
     </table>
-    <p>Each terminal session is an independent agent. You can have <strong>multiple running in parallel</strong>, each with its own focus.</p>
+    <p><span style="color:var(--ctp-green)">Agents</span> define <strong>who does it</strong> (tools + model). <span style="color:var(--ctp-blue)">Skills</span> define <strong>how to do it</strong> (workflow).</p>
   </div>
 </section>
 
@@ -702,12 +707,12 @@ Agents <span style="color:var(--ctp-overlay0)">(actors that run multiple skills)
       <li><strong>Rules</strong> — what it can and cannot do</li>
       <li><strong>Expected result</strong> — PRs opened, tests passing, docs updated</li>
     </ol>
-    <pre><code><span style="color:var(--ctp-green)">You:</span> "This ticket is about refactoring blocking API calls
-      to Google. We use OpenTelemetry for observability and
-      functional interfaces for dependency injection."
+    <pre><code><span style="color:var(--ctp-green)">You:</span> "This issue is about adding a new slide on MCP.
+      The project is pure HTML with Catppuccin Macchiato theme.
+      Follow CLAUDE.md and keep PT-BR and EN in sync."
 
-<span style="color:var(--ctp-blue)">Claude:</span> [explores the codebase in parallel]
-        [reads 7 patterns, 3 files]
+<span style="color:var(--ctp-blue)">Claude:</span> [reads CLAUDE.md, AGENTS.md, update-slides skill]
+        [analyzes the structure of all 33 existing slides]
         [proposes a detailed plan]</code></pre>
     <p>The agent explores, reads, understands — and <strong>proposes a plan</strong>. You don't accept it blindly. You <strong>review the plan</strong>.</p>
   </div>
